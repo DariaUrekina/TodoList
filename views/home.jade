@@ -1,0 +1,20 @@
+extends layout
+
+block content
+    // Wrapper
+    #wrapper  
+        #addList 
+            form(name="form", action="/lists", method="post")
+                input#inputList(type='text', placeholder='List...', name="name")
+                button#btnAddList Add List
+            ul
+
+                
+        #addTask        
+            form(name="form", action="/todos", method="post")
+                input#inputTask(type='text', placeholder='Task...', name="name", size="100")
+                button#btnAddTask Add Task 
+            ul
+
+    // /WRAPPER
+
