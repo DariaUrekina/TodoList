@@ -1,11 +1,12 @@
 (function() {
+"use strict";    
 var listByTasks = [];
 var listByLists=[];
 var selectedList=0;
 //var currentList=[];
 $(document).ready(function() {
     fillList('/tasks', '#addTask ul', function (task){
-        return '<li data-taskid=">' + task['_id']+'">' + '<input type="checkbox">' + task.name + '</li>';
+        return '<li id="li" data-taskid="' + task['_id']+'">' + '<input type="checkbox">' + task.name + '<i class="fa fa-times"></i>'+'</li>';
     });
     fillList('/lists', '#addList ul', function(list) {
         return '<li data-listid="'+list['_id']+'">' + list.name + '</li>';
@@ -13,6 +14,11 @@ $(document).ready(function() {
 
     $('#btnAddTask').on('click', addTask);
     $('#btnAddList').on('click', addList);
+    $('#addTask ul').click(function(event) {
+        if (event.target.tagName=='I') {
+            removeTask(event);        
+        }
+    });
 });
 
 function sendAjaxPost(url, data, callback) { 
@@ -30,6 +36,13 @@ function sendAjaxGet(url, callback) {
         type:'GET',
         url:url 
     }).done(callback);                
+}
+
+function sendAjaxDelete(url,callback) {
+    $.ajax({
+        type:'DELETE',
+        url:url
+    }).done(callback);
 }
 
 
@@ -63,10 +76,19 @@ function addTask(event) {
             console.log('lol');
             $('#addTask input').val('');
             fillList('/lists/'+selectedList, '#addTask ul', function (task){
-                return '<li data-taskid=">' + task['_id']+'">' + '<input type="checkbox">' + task.name + '</li>';
+            return '<li data-taskid="' + task['_id']+'">' + '<input type="checkbox">' + task.name + '<i class="fa fa-times"></i>'+ '</li>';
             });
         });       
     }
+}
+
+function removeTask(event) {
+    event.preventDefault();
+    var li = event.target.parentNode;
+    console.log(li.dataset.taskid);
+    sendAjaxDelete('/tasks/'+li.dataset.taskid, function(task) {
+        $(li).remove();
+    });
 }
 
 function addList(event) {
@@ -97,7 +119,7 @@ $('#addList').click(function(event) {
     if (event.target.tagName=='LI') {
         selectedList=(event.target.dataset.listid);
         fillList('/lists/' + selectedList, '#addTask ul', function (task) {
-            return '<li data-taskid=">' + task['_id']+'">' + '<input type="checkbox">' + task.name + '</li>';
+            return '<li data-taskid="' + task['_id']+'">' + '<input type="checkbox">' + task.name + '<i class="fa fa-times"></i>'+'</li>';
         });
     }
 });
@@ -105,16 +127,27 @@ $('#addList').click(function(event) {
 
 $('#addTask').click(function(event) {
     if (event.target.tagName=='LI') {
-        selectedTask=(event.target.dataset.taskid);
+        var selectedTask=(event.target.dataset.taskid);
         console.log(selectedTask);
     }
 });
 
+
+$('#addTask ul').click(function(event) {
+    if (event.target.tagName=='INPUT') {
+        if  ($(event.target).parent().hasClass("done")) {
+            $(event.target).parent().removeClass("done");
+        }
+        else {
+            $(event.target).parent().addClass("done");
+        }        
+    }
+});    
+
+/*$('#addTask ul').click(function(event) {
+    if (event.target.tagName=='I') {
+        $(event.target).parent().addClass("hidden");        
+    }
+})*/
+
 })();
-
-
-
- 
-
-
-

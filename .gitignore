@@ -3,3 +3,5 @@ npm-debug.log
 mongod.lock
 /journal
 /data
+*.0
+*.ns

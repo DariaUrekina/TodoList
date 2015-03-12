@@ -10,6 +10,7 @@ a {
 }
 
 #addTask li {
+	position: relative;
 	border: 1px solid white;
 	margin: 2px;
 	background-color: #f4f4f4;
@@ -139,5 +140,24 @@ h1.error-message{
 }
 ul.user-details{
     list-style: none;
+}
+
+
+i {
+	position: absolute;
+	right: 5px;
+	top: 8px;
+}
+
+.hidden {
+	display: none;
+}
+
+.done {
+	text-decoration: line-through;
+}
+
+.undone {
+    text-decoration: none;
 }
 
