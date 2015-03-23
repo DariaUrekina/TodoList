@@ -127,7 +127,16 @@ function TaskView() {
         }
     });
 
-     
+    $('#addTask ul').dblclick(function(event) {
+        if(event.target.tagName=='LI') {
+            $('#dialogTask').dialog('open');
+            that.emit('PutTaskNameInDialog', {
+                id:event.target.dataset.taskid,
+            });
+        }
+    });
+
+       
 }
 
 
@@ -152,6 +161,13 @@ function TaskSettingsView() {
         }
     });
 
+    this.onShowNewTaskName = function(task) {
+        console.log(task);
+        console.log('tsak');
+        $('#ui-id-1').html(task[0].name);
+    }
+    this.on('ShowNewTaskName', this.onShowNewTaskName);
+
 }
 
 function ListSettingsView() {
@@ -163,8 +179,6 @@ function ListSettingsView() {
     });  
 
     this.onShowNewListName = function(list) {
-        console.log(list);
-        console.log('fdsk');
         $("#name").val(list[0].name);
     }
     this.on('ShowNewListName', this.onShowNewListName);
@@ -246,8 +260,15 @@ function TaskData(){
             that.emit('showTasks', listByTasks);
         });
     }
- 
-    
+
+    this.onPutTaskNameInDialog = function(options) {
+        selectedTaskById = listByTasks.filter(function(task){
+            return task._id==options.id;
+        })
+        that.emit('ShowNewTaskName', selectedTaskById)
+    }
+   
+    this.on('PutTaskNameInDialog', this.onPutTaskNameInDialog);
     this.on('removeTask', this.onRemoveTask);
     this.on('addTask', this.onAddTask);
     this.on('LoadTasks', this.onLoadTasks);
