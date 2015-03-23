@@ -83,12 +83,15 @@ function ListView() {
         }
     });
 
+   
     $('#addList ul').dblclick(function(event) {
-        if (event.target.tagName=='LI') {       
+        if(event.target.tagName=='LI') {
             $('#dialogList').dialog('open');
-            that.emit('removeTask', {id:event.target.parentNode.dataset.listid})
+            that.emit('PutListNameInInput', {
+                id:event.target.dataset.listid,
+            });
         }
-    });
+    });  
 
 }
 
@@ -124,13 +127,12 @@ function TaskView() {
         }
     });
 
-    $
-
-    $("#datepicker_setdate" ).datepicker({
-        onSelect: function(date) {
-           console.log(date);
+     $('#addTask ul').dbclick(function(event) {
+        if(event.target.tagName=='LI') {
+            $('#dialogTask').dialog('open');
         }
-    });
+    })
+  
 }
 
 
@@ -152,8 +154,13 @@ function TaskSettingsView() {
             $('#dialogTask').dialog('open');
             that.emit('changeTaskName', {
                 id:event.target.dataset.taskid,
-                name:event.target.dataset.taskname
             });
+        }
+    });
+
+     $("#datepicker_setdate" ).datepicker({
+        onSelect: function(date) {
+           console.log(date);
         }
     });
 
@@ -162,24 +169,30 @@ function TaskSettingsView() {
 function ListSettingsView() {
     Component.call(this);
     var that=this;
-    $('#addList ul').dblclick(function(event) {
-        if(event.target.tagName=='LI') {
-            $('#dialogList').dialog('open');
-            that.emit('PutListNameInInput', {
-                id:event.target.dataset.listid,
-                name:event.target.dataset.listname
-            });
-            that.emit('ChangeListName', {
-                id: event.target.dataset.listid
-            });
-           
-        }
-    });   
-
     $('#dialogList').dialog({
         autoOpen:false,
         closeOnEscape:true,
-    });    
+    });  
+
+    /*this.onShowLists = function(listByLists) {
+        console.log(listByLists);
+        var liContent='';
+        $.each(listByLists, function(list){
+            liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
+        });
+        this.listElement.html(liContent);
+    };    
+    this.on('showLists', this.onShowLists);*/
+
+    this.onShowNewListName = function(list) {
+        console.log(list);
+        console.log('fdsk')
+
+        $("#name").val(list[0].name);
+    }
+    this.on('ShowNewListName', this.onShowNewListName);
+
+
 }   
 
 function ListData() {
@@ -211,10 +224,12 @@ function ListData() {
         });
     }
 
-    this.onPutListNameInInput = function(list) {        
-        selectedListByName=list.name;
-        $('#name').val(selectedListByName);
-        that.emit('showLists', listByLists);
+    this.onPutListNameInInput = function(options) { 
+        selectedListById=listByLists.filter(function(list) {
+           return  list._id==options.id;           
+        });         
+        console.log(selectedListById);
+        that.emit('ShowNewListName', selectedListById)
     }
 
     this.onChangeListName = function(list) {
