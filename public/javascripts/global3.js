@@ -113,17 +113,19 @@ function ListView() {
 function TaskView() {
     Component.call(this);    
     var that=this;
+    var checkbox;
     this.onShowTasks = function(listByTasks) {
         var liContent='';
         $.each(listByTasks, function(task) {
             if (typeof this.expireAt==='undefined') {
                 this.expireAt='';
             }
-
-            if (typeof this.done==='undefined') {
-                this.done='';
+            if (this.done) {
+                checkbox= '<input type="checkbox" checked>'
+            } else {
+                checkbox = '<input type="checkbox">';
             }
-            liContent+='<li data-taskname="'+ this.name+'"'+ 'data-taskid="' + this['_id']+'">' + '<input type="checkbox">' + this.done + this.name +'<span>' + this.expireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+            liContent+='<li data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + this.expireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
         $('#addTask ul').html(liContent);
     };
@@ -159,15 +161,13 @@ function TaskView() {
 
     $('#addTask ul').click(function(event) {
         if (event.target.tagName=='INPUT') {
-            that.emit('DoneTask', {
+            that.emit('ifDoneTask', {
                 id:event.target.parentNode.dataset.taskid,
-                done: false
+                done: event.target.checked
             })
         }
     });    
 }
-
-
 
 function TaskSettingsView() {
     Component.call(this);
@@ -329,18 +329,16 @@ function TaskData(){
         that.emit('showTasks', listByTasks);
     }
 
-    this.onDoneTask = function(options) {
+    this.onIfDoneTask = function(options) {
         for (var i=0; i<listByTasks.length; i++) {
             if (listByTasks[i]._id===options.id) {
-                listByTasks[i].done='true';
-                console.log(options.done);
-                console.log(listByTasks[i]);
+                listByTasks[i].done=options.done;
             } 
         }
         that.emit('showTasks', listByTasks);
     }   
 
-    this.on('DoneTask', this.onDoneTask);
+    this.on('ifDoneTask', this.onIfDoneTask);
     this.on('setDate', this.onSetDate); 
     this.on('PutTaskNameInDialog', this.onPutTaskNameInDialog);
     this.on('removeTask', this.onRemoveTask);
