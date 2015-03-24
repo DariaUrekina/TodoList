@@ -17,6 +17,15 @@ function sendAjaxDelete(url,callback) {
     }).done(callback);
 }
 
+function sendAjaxUpdate(url, data, callback) {
+    $.ajax({
+        type:'PUT',
+        data:data,
+        url:url,
+        dataType:'JSON'
+    }).done(callback);
+}
+
 function Dispatcher() {
     this.schedule = {}; //объект колбэков связынных с событиями 
     this.emit = function(event, options) { //инициирует событие
@@ -51,11 +60,14 @@ function ListView() {
     Component.call(this);
     this.listElement = $('#addList ul');
     this.onShowLists = function(listByLists) {
-        var liContent='';
-        $.each(listByLists, function(list){
-            liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
-        });
-        this.listElement.html(liContent);
+        //sendAjaxUpdate('/lists', listByLists, function(list){
+            var liContent='';
+            $.each(listByLists, function(list){
+                liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
+            });
+            this.listElement.html(liContent);
+       // })
+        
     };
     
     this.on('showLists', this.onShowLists);
@@ -64,7 +76,9 @@ function ListView() {
     var that = this;
     $('#addList ul').click(function(event) {
         if (event.target.tagName === 'LI') {
-            that.emit('LoadTasks', {id:event.target.dataset.listid});                  
+            that.emit('LoadTasks', {
+                id:event.target.dataset.listid
+            });                  
         }
     });
 
@@ -78,7 +92,9 @@ function ListView() {
 
     $('#addList ul').on('click', function(event) {
         if (event.target.tagName=='I'){
-            that.emit('removeList', {id:event.target.parentNode.dataset.listid})
+            that.emit('removeList', {
+                id:event.target.parentNode.dataset.listid
+            });
         }
     });
 
@@ -91,21 +107,25 @@ function ListView() {
             });
         }
     }); 
+
 }
 
 function TaskView() {
     Component.call(this);    
     var that=this;
-    this.taskElement = $('#addTask ul');
     this.onShowTasks = function(listByTasks) {
         var liContent='';
         $.each(listByTasks, function(task) {
             if (typeof this.expireAt==='undefined') {
                 this.expireAt='';
             }
-            liContent+='<li data-taskname="'+ this.name+'"'+ 'data-taskid="' + this['_id']+'">' + '<input type="checkbox">' + this.name +'<span>' + this.expireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+
+            if (typeof this.done==='undefined') {
+                this.done='';
+            }
+            liContent+='<li data-taskname="'+ this.name+'"'+ 'data-taskid="' + this['_id']+'">' + '<input type="checkbox">' + this.done + this.name +'<span>' + this.expireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
-        this.taskElement.html(liContent);
+        $('#addTask ul').html(liContent);
     };
     this.on('showTasks', this.onShowTasks);
 
@@ -121,7 +141,9 @@ function TaskView() {
 
     $('#addTask ul').on('click', function(event) {
         if (event.target.tagName=='I'){
-            that.emit('removeTask', {id:event.target.parentNode.dataset.taskid})
+            that.emit('removeTask', {
+                id:event.target.parentNode.dataset.taskid
+            });
         }
     });
 
@@ -129,10 +151,20 @@ function TaskView() {
         if(event.target.tagName=='LI') {
             $('#dialogTask').dialog('open');
             that.emit('PutTaskNameInDialog', {
-                id:event.target.dataset.taskid,
+                id:event.target.dataset.taskid
             });
         }
-    });       
+    });    
+
+
+    $('#addTask ul').click(function(event) {
+        if (event.target.tagName=='INPUT') {
+            that.emit('DoneTask', {
+                id:event.target.parentNode.dataset.taskid,
+                done: false
+            })
+        }
+    });    
 }
 
 
@@ -291,11 +323,24 @@ function TaskData(){
         for (var i=0; i<listByTasks.length; i++){
             if (listByTasks[i]._id === options.id) {
                 listByTasks[i].expireAt=options.date;
+                console.log(listByTasks[i]);
             }
         }
         that.emit('showTasks', listByTasks);
     }
-   
+
+    this.onDoneTask = function(options) {
+        for (var i=0; i<listByTasks.length; i++) {
+            if (listByTasks[i]._id===options.id) {
+                listByTasks[i].done='true';
+                console.log(options.done);
+                console.log(listByTasks[i]);
+            } 
+        }
+        that.emit('showTasks', listByTasks);
+    }   
+
+    this.on('DoneTask', this.onDoneTask);
     this.on('setDate', this.onSetDate); 
     this.on('PutTaskNameInDialog', this.onPutTaskNameInDialog);
     this.on('removeTask', this.onRemoveTask);
