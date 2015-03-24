@@ -20,6 +20,7 @@ function sendAjaxDelete(url,callback) {
 function Dispatcher() {
     this.schedule = {}; //объект колбэков связынных с событиями 
     this.emit = function(event, options) { //инициирует событие
+        console.log(event);
         $.each(this.schedule[event], function(callback) { //для каждого колбэка вызывается функция которая вызывает этот колбэк
             this(options);
         });
@@ -40,7 +41,6 @@ function Component() {
         dispatcher.emit(event, options);
     };
     this.on= function(event, callback) {
-        console.log(event);
         dispatcher.on(event, callback.bind(this));        
     };
 }
@@ -51,7 +51,6 @@ function ListView() {
     Component.call(this);
     this.listElement = $('#addList ul');
     this.onShowLists = function(listByLists) {
-        console.log(listByLists);
         var liContent='';
         $.each(listByLists, function(list){
             liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
@@ -88,11 +87,10 @@ function ListView() {
         if(event.target.tagName=='LI') {
             $('#dialogList').dialog('open');
             that.emit('PutListNameInInput', {
-                id:event.target.dataset.listid,
+                id:event.target.dataset.listid
             });
         }
-    });  
-
+    }); 
 }
 
 function TaskView() {
@@ -105,7 +103,7 @@ function TaskView() {
             if (typeof this.expireAt==='undefined') {
                 this.expireAt='';
             }
-            liContent+='<li data-taskname="'+ this.name+'"'+ 'data-taskid="' + this['_id']+'">' + '<input type="checkbox">' + this.name + this.expireAt + '<i class="fa fa-times"></i>'+ '</li>';
+            liContent+='<li data-taskname="'+ this.name+'"'+ 'data-taskid="' + this['_id']+'">' + '<input type="checkbox">' + this.name +'<span>' + this.expireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
         this.taskElement.html(liContent);
     };
@@ -134,9 +132,7 @@ function TaskView() {
                 id:event.target.dataset.taskid,
             });
         }
-    });
-
-       
+    });       
 }
 
 
@@ -144,6 +140,7 @@ function TaskView() {
 function TaskSettingsView() {
     Component.call(this);
     var that=this;
+    this.task=[];
     $('#dialogTask').dialog({
         autoOpen:false,
         closeOnEscape:true,
@@ -154,36 +151,51 @@ function TaskSettingsView() {
         hide: { effect: "drop", direction: "right" }
     });
    
-
-     $("#datepicker_setdate" ).datepicker({
+    this.onShowNewTaskName = function(task) {
+        that.task=task[0];
+        $('#ui-id-1').html(that.task.name);
+    }
+    
+    $("#datepicker_setdate" ).datepicker({
         onSelect: function(date) {
            console.log(date);
+           that.emit('setDate', {
+             id:that.task._id, 
+             date: date
+           });
         }
     });
-
-    this.onShowNewTaskName = function(task) {
-        console.log(task);
-        console.log('tsak');
-        $('#ui-id-1').html(task[0].name);
-    }
     this.on('ShowNewTaskName', this.onShowNewTaskName);
+
 
 }
 
 function ListSettingsView() {
     Component.call(this);
     var that=this;
+    this.list=[];
+    
     $('#dialogList').dialog({
         autoOpen:false,
         closeOnEscape:true,
     });  
 
     this.onShowNewListName = function(list) {
-        $("#name").val(list[0].name);
+        console.log(list);
+        that.list=list[0];
+        $('#name').val(that.list.name);
     }
+    
+    $('.btnReady').on('click', function(event) {
+        event.preventDefault();
+        that.emit('ChangeListName', {
+            id:that.list._id,
+            name: $('#name').val()
+        });
+        $("#dialogList").dialog("close");
+    }); 
+
     this.on('ShowNewListName', this.onShowNewListName);
-
-
 }   
 
 function ListData() {
@@ -219,10 +231,19 @@ function ListData() {
         selectedListById=listByLists.filter(function(list) {
            return  list._id==options.id;           
         });         
-        console.log(selectedListById);
         that.emit('ShowNewListName', selectedListById)
     }
 
+    this.onChangeListName = function(options) {
+        for (var i = 0; i < listByLists.length; i++) {
+            if (listByLists[i]._id === options.id) {
+                listByLists[i].name = options.name;
+            }
+        }        
+        that.emit('showLists', listByLists);
+    }
+
+    this.on('ChangeListName', this.onChangeListName);
     this.on('PutListNameInInput', this.onPutListNameInInput);
     this.on('removeList', this.onRemoveLists);
     this.on('addList', this.onAddList);
@@ -234,13 +255,11 @@ function TaskData(){
     var that=this;
     var selectedListById;
     var selectedTaskById;
-    var selectedTaskByName;
     var listByTasks=[];
     this.onLoadTasks = function(options){
         $.getJSON('/lists/' + options.id, function(data) {
             listByTasks= data;
             selectedListById=options.id;
-            console.log(selectedListById);
             that.emit('showTasks', listByTasks);
         });
     };
@@ -264,10 +283,20 @@ function TaskData(){
     this.onPutTaskNameInDialog = function(options) {
         selectedTaskById = listByTasks.filter(function(task){
             return task._id==options.id;
-        })
+        });
         that.emit('ShowNewTaskName', selectedTaskById)
     }
+
+    this.onSetDate = function(options) {
+        for (var i=0; i<listByTasks.length; i++){
+            if (listByTasks[i]._id === options.id) {
+                listByTasks[i].expireAt=options.date;
+            }
+        }
+        that.emit('showTasks', listByTasks);
+    }
    
+    this.on('setDate', this.onSetDate); 
     this.on('PutTaskNameInDialog', this.onPutTaskNameInDialog);
     this.on('removeTask', this.onRemoveTask);
     this.on('addTask', this.onAddTask);
