@@ -134,9 +134,9 @@ function TaskView() {
     $('#btnAddTask').on('click', function(event) {
         event.preventDefault();
         that.emit('addTask', {
-            task: {
-                name: $('#addTask input').val()
-            } 
+            //task: {
+                'name': $('#addTask input').val()
+            //} 
         });
         $('#addTask input').val('');
     });
@@ -146,6 +146,12 @@ function TaskView() {
             that.emit('removeTask', {
                 id:event.target.parentNode.dataset.taskid
             });
+        };
+        if (event.target.tagName=='INPUT') {
+            that.emit('ifDoneTask', {
+                id:event.target.parentNode.dataset.taskid,
+                done: event.target.checked
+            })
         }
     });
 
@@ -155,16 +161,6 @@ function TaskView() {
             that.emit('PutTaskNameInDialog', {
                 id:event.target.dataset.taskid
             });
-        }
-    });    
-
-
-    $('#addTask ul').click(function(event) {
-        if (event.target.tagName=='INPUT') {
-            that.emit('ifDoneTask', {
-                id:event.target.parentNode.dataset.taskid,
-                done: event.target.checked
-            })
         }
     });    
 }
@@ -237,10 +233,12 @@ function ListData() {
     var selectedListById;
     var selectedListByName;
     this.onAddList = function (newList) {
-        sendAjaxPost('/lists', newList, function(list) {
-            listByLists.push(list);
-            that.emit('showLists', listByLists);
-        });
+        if (newList.name!=''){
+            sendAjaxPost('/lists', newList, function(list) {
+                listByLists.push(list);                
+                that.emit('showLists', listByLists);
+            });
+        }   
     }
      
     this.onLoadLists = function(){
@@ -267,12 +265,14 @@ function ListData() {
     }
 
     this.onChangeListName = function(options) {
-        for (var i = 0; i < listByLists.length; i++) {
-            if (listByLists[i]._id === options.id) {
-                listByLists[i].name = options.name;
-            }
-        }        
-        that.emit('showLists', listByLists);
+        sendAjaxUpdate('/lists/' + options.id, {name:options.name}, function(list){
+            for (var i = 0; i < listByLists.length; i++) {
+                if (listByLists[i]._id === options.id) {
+                    listByLists[i].name = options.name;
+                }
+            } 
+            that.emit('showLists', listByLists);      
+        });
     }
 
     this.on('ChangeListName', this.onChangeListName);
@@ -297,10 +297,12 @@ function TaskData(){
     };
     this.onAddTask = function(newTask) {
         newTask.list_id=selectedListById;
-        sendAjaxPost('/tasks' , newTask, function(task) {
-            listByTasks.push(task);
-            that.emit('showTasks', listByTasks);
-        })
+        if (newTask.name!='') {
+            sendAjaxPost('/tasks' , newTask, function(task) {
+                listByTasks.push(task);
+                that.emit('showTasks', listByTasks);
+            });
+        }    
     }
 
     this.onRemoveTask = function(options) {
@@ -333,6 +335,10 @@ function TaskData(){
         for (var i=0; i<listByTasks.length; i++) {
             if (listByTasks[i]._id===options.id) {
                 listByTasks[i].done=options.done;
+                var tmp = listByTasks[i];
+                listByTasks.splice(i,1);
+                listByTasks.push(tmp);
+                console.log(listByTasks);
             } 
         }
         that.emit('showTasks', listByTasks);
