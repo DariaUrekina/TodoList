@@ -184,7 +184,7 @@ function TaskSettingsView() {
         $('#ui-id-1').html(that.task.name);
     }
     
-    $("#datepicker_setdate" ).datepicker({
+    $('#datepicker_setdate' ).datepicker({
         onSelect: function(date) {
            console.log(date);
            that.emit('setDate', {
@@ -193,6 +193,11 @@ function TaskSettingsView() {
            });
         }
     });
+
+    $('#subtask').on('ckick', function(event) {
+        event.preventDefault();
+    });
+
     this.on('ShowNewTaskName', this.onShowNewTaskName);
 
 
@@ -220,7 +225,7 @@ function ListSettingsView() {
             id:that.list._id,
             name: $('#name').val()
         });
-        $("#dialogList").dialog("close");
+        $('#dialogList').dialog('close');
     }); 
 
     this.on('ShowNewListName', this.onShowNewListName);
@@ -322,13 +327,14 @@ function TaskData(){
     }
 
     this.onSetDate = function(options) {
-        for (var i=0; i<listByTasks.length; i++){
-            if (listByTasks[i]._id === options.id) {
-                listByTasks[i].expireAt=options.date;
-                console.log(listByTasks[i]);
+        sendAjaxUpdate('/tasks/' + options.id, {date:options.date}, function(task){ 
+            for (var i=0; i<listByTasks.length; i++){
+                if (listByTasks[i]._id === options.id) {
+                    listByTasks[i].expireAt=options.date;
+                }
             }
-        }
-        that.emit('showTasks', listByTasks);
+            that.emit('showTasks', listByTasks);
+        });
     }
 
     this.onIfDoneTask = function(options) {
