@@ -120,6 +120,9 @@ function TaskView() {
             if (typeof this.expireAt==='undefined') {
                 this.expireAt='';
             }
+            if (typeof this.expireAt !='undefined') {
+                this.expireAt= moment(this.expireAt).format('DD/MM/YYYY') ;
+            }       
             if (this.done) {
                 checkbox= '<input type="checkbox" checked>'
             } else {
@@ -132,7 +135,7 @@ function TaskView() {
     this.on('showTasks', this.onShowTasks);
 
     $('#btnAddTask').on('click', function(event) {
-        event.preventDefault();
+        event.preventDefault();          
         that.emit('addTask', {
             task: {
                 'name': $('#addTask input').val()
@@ -184,13 +187,12 @@ function TaskSettingsView() {
         $('#ui-id-1').html(that.task.name);
     }
     
-    $('#datepicker_setdate' ).datepicker({
-        onSelect: function(date) {
-           console.log(date);
-           that.emit('setDate', {
-             id:that.task._id, 
-             date: date
-           });
+    $('#datepicker_setdate' ).datepicker({     
+        onSelect: function(date) {                
+            that.emit('setDate', {
+                id:that.task._id, 
+                date: date 
+            });
         }
     });
 
@@ -247,7 +249,7 @@ function ListData() {
     }
      
     this.onLoadLists = function(){
-        $.getJSON('/lists', function(data) {
+        $.getJSON('/lists', function(data) {    
             listByLists = data;
             that.emit('showLists', listByLists);
         });
@@ -327,13 +329,13 @@ function TaskData(){
     }
 
     this.onSetDate = function(options) {
-        sendAjaxUpdate('/tasks/' + options.id, {date:options.date}, function(task){ 
+        sendAjaxUpdate('/tasks/' + options.id, {expireAt: options.date}, function(task){ 
             for (var i=0; i<listByTasks.length; i++){
                 if (listByTasks[i]._id === options.id) {
                     listByTasks[i].expireAt=options.date;
                 }
             }
-            that.emit('showTasks', listByTasks);
+            that.emit('showTasks', listByTasks);    
         });
     }
 
