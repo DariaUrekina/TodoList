@@ -134,9 +134,9 @@ function TaskView() {
     $('#btnAddTask').on('click', function(event) {
         event.preventDefault();
         that.emit('addTask', {
-            //task: {
+            task: {
                 'name': $('#addTask input').val()
-            //} 
+            } 
         });
         $('#addTask input').val('');
     });
@@ -151,7 +151,7 @@ function TaskView() {
             that.emit('ifDoneTask', {
                 id:event.target.parentNode.dataset.taskid,
                 done: event.target.checked
-            })
+            });
         }
     });
 
@@ -297,7 +297,7 @@ function TaskData(){
     };
     this.onAddTask = function(newTask) {
         newTask.list_id=selectedListById;
-        if (newTask.name!='') {
+        if (newTask.task.name!='') {
             sendAjaxPost('/tasks' , newTask, function(task) {
                 listByTasks.push(task);
                 that.emit('showTasks', listByTasks);
