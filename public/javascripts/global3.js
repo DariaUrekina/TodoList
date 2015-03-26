@@ -197,9 +197,10 @@ function TaskSettingsView() {
             });
         }
     });
-
-    $('#subtask').on('ckick', function(event) {
-        event.preventDefault();
+    
+    $('#fileuploader').uploadFile({
+        url:"YOUR_FILE_UPLOAD_URL",
+        fileName:"myfile"
     });
 
     this.on('ShowNewTaskName', this.onShowNewTaskName);
@@ -342,16 +343,18 @@ function TaskData(){
     }
 
     this.onIfDoneTask = function(options) {
-        for (var i=0; i<listByTasks.length; i++) {
-            if (listByTasks[i]._id===options.id) {
-                listByTasks[i].done=options.done;
-                var tmp = listByTasks[i];
-                listByTasks.splice(i,1);
-                listByTasks.push(tmp);
-                console.log(listByTasks);
-            } 
-        }
-        that.emit('showTasks', listByTasks);
+        sendAjaxUpdate('/tasks/' + options.id, {done:options.done}, function(task) { 
+            for (var i=0; i<listByTasks.length; i++) {
+                if (listByTasks[i]._id===options.id) {
+                    listByTasks[i].done=options.done;
+                    /*var tmp = listByTasks[i];
+                    listByTasks.splice(i,1);
+                    listByTasks.push(tmp);
+                    console.log(listByTasks);*/
+                } 
+            }
+            that.emit('showTasks', listByTasks);
+        });    
     }   
 
     this.on('ifDoneTask', this.onIfDoneTask);
