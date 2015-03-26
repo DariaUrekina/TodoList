@@ -116,19 +116,21 @@ function TaskView() {
     var checkbox;
     this.onShowTasks = function(listByTasks) {
         var liContent='';
+       
         $.each(listByTasks, function(task) {
+            var formatedExpireAt;
             if (typeof this.expireAt==='undefined') {
-                this.expireAt='';
-            }
+                formatedExpireAt='';
+            } else 
             if (typeof this.expireAt !='undefined') {
-                this.expireAt= moment(this.expireAt).format('DD/MM/YYYY') ;
+                formatedExpireAt = moment(this.expireAt).format('DD/MM/YYYY') ;
             }       
             if (this.done) {
                 checkbox= '<input type="checkbox" checked>'
             } else {
                 checkbox = '<input type="checkbox">';
             }
-            liContent+='<li data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + this.expireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+            liContent+='<li data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + formatedExpireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
         $('#addTask ul').html(liContent);
     };
