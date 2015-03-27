@@ -1,5 +1,22 @@
 $(function() {
 "use strict";    
+$(document).ready(function() {
+     $('#uploadForm').submit(function() {
+
+        $(this).ajaxSubmit({
+
+            error: function(xhr) {
+                    status('Error: ' + xhr.status);
+            },
+
+            success: function(response) {
+                      console.log(response);
+            }
+    });
+        //Very important line, it disable the page refresh.
+    return false;
+    });    
+});
 
 function sendAjaxPost(url, data, callback) { 
     $.ajax({
@@ -60,14 +77,12 @@ function ListView() {
     Component.call(this);
     this.listElement = $('#addList ul');
     this.onShowLists = function(listByLists) {
-        //sendAjaxUpdate('/lists', listByLists, function(list){
             var liContent='';
             $.each(listByLists, function(list){
                 liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
             });
             this.listElement.html(liContent);
-       // })
-        
+            
     };
     
     this.on('showLists', this.onShowLists);
@@ -115,8 +130,7 @@ function TaskView() {
     var that=this;
     var checkbox;
     this.onShowTasks = function(listByTasks) {
-        var liContent='';
-       
+        var liContent='';       
         $.each(listByTasks, function(task) {
             var formatedExpireAt;
             if (typeof this.expireAt==='undefined') {
@@ -130,7 +144,7 @@ function TaskView() {
             } else {
                 checkbox = '<input type="checkbox">';
             }
-            liContent+='<li data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + formatedExpireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+            liContent+='<li  data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + formatedExpireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
         $('#addTask ul').html(liContent);
     };
@@ -198,11 +212,7 @@ function TaskSettingsView() {
         }
     });
     
-    $('#fileuploader').uploadFile({
-        url:"YOUR_FILE_UPLOAD_URL",
-        fileName:"myfile"
-    });
-
+   
     this.on('ShowNewTaskName', this.onShowNewTaskName);
 
 
@@ -343,10 +353,14 @@ function TaskData(){
     }
 
     this.onIfDoneTask = function(options) {
+        var doneTasks = [];
         sendAjaxUpdate('/tasks/' + options.id, {done:options.done}, function(task) { 
             for (var i=0; i<listByTasks.length; i++) {
                 if (listByTasks[i]._id===options.id) {
                     listByTasks[i].done=options.done;
+                    doneTasks.push(listByTasks[i]); 
+                    console.log(doneTasks);           
+
                     /*var tmp = listByTasks[i];
                     listByTasks.splice(i,1);
                     listByTasks.push(tmp);
