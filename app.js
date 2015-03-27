@@ -1,6 +1,9 @@
 //Creates an Express application. The express() function is a top-level function exported by the express module.
 var express = require('express');
 var path = require('path');
+var http=require('http');
+var formidable=require('formidable');
+var fs=require('fs');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -35,6 +38,32 @@ app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+app.post('/upload', function(req, res) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        var old_path = files.file.path,
+            file_size = files.file.size,
+            file_ext = files.file.name.split('.').pop(),
+            index = old_path.lastIndexOf('/') + 1,
+            file_name = old_path.substr(index),
+            new_path = path.join(process.env.PWD, '/uploads/', file_name + '.' + file_ext);
+ 
+        fs.readFile(old_path, function(err, data) {
+            fs.writeFile(new_path, data, function(err) {
+                fs.unlink(old_path, function(err) {
+                    if (err) {
+                        res.status(500);
+                        res.json({'success': false});
+                    } else {
+                        res.status(200);
+                        res.json({'success': true});
+                    }
+                });
+            });
+        });
+    });
+});
 
 app.use('/home', home);
 app.use('/users', users);
@@ -93,6 +122,8 @@ mongoose.connect('mongodb://localhost/todoApp', function(err) {
         console.log('connection successful');
     }
 });
+
+
 
 
 module.exports = app;
