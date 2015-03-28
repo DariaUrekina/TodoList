@@ -11,19 +11,23 @@ a {
 
 #addTask li {
 	position: relative;
-	border: 1px solid white;
-	margin: 2px;
+    margin: 2px;
+    padding: 7px;
+    border-radius: 5px;
+	border: 1px solid white;	
 	background-color: #f4f4f4;
-	width: 70%;
-	padding: 7px;
-	border-radius: 5px;
+	width: 70%;	
 	opacity: 0.8;
+    cursor: pointer;
+}
+
+#addTask li:hover {
+     background-color: #0099cc; 
 }
 
 
 #addTask ul {
 	margin: 10px 0 3px 275px;
-
 }
 
 #addTask form {
@@ -31,49 +35,55 @@ a {
 	width: 275px;
 }
 
-
 button {
 	display: none;
-	/*border-radius: 5px;
-	background-color: #fffeee;
-	width: 75px;*/
 }
+
 #addList {
 	position: absolute;
 	left: 1px;
-	background-color: #fcfcfc;
+    background-color: #fcfcfc;
+	
 }
 
 #addList form {
 	width: 250px;
-
 }
 
 #addList ul {
 	position: absolute;
 	width: 250px;	
-	background-color: #fcfcfc;
-
 }
 
 #addList li {
-	cursor: pointer;
-	padding: 5px;
-	margin:7px 0 4px 0;
+    position: relative;	
+	padding: 7px;
+	margin:2px 0 1px 0;
+    cursor: pointer;
+    opacity: 0.8;
+    background-color: #fcfcfc;
+    border-radius: 5px;
 }
 
-.form-signin{
+#addList li:hover {
+    background-color: #0099cc;
+}
+
+.form-signin {
     max-width: 330px;
     padding: 15px;
     margin: 0 auto;
 }
-.form-signin .form-signin-heading, .form-signin .checkbox{
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
     margin-bottom: 10px;
 }
-.form-signin .checkbox{
+
+.form-signin .checkbox {
     font-weight: normal;
 }
-.form-signin .form-control{
+
+.form-signin .form-control {
     position: relative;
     font-size: 16px;
     height: auto;
@@ -82,25 +92,27 @@ button {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
-.form-signin .form-control:focus{
+
+.form-signin .form-control:focus {
     z-index: 2;
 }
-.form-signin input[type="text"]{
+
+.form-signin input[type="text"] {
     margin-bottom: -1px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
-.form-signin input[type="password"]{
+.form-signin input[type="password"] {
     margin-bottom: 10px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
-.form-signin input[type="password"].nomargin{
+.form-signin input[type="password"].nomargin {
 	margin-bottom: 0px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
-.account-wall{
+.account-wall {
     margin-top: 20px;
     padding: 40px 0px 20px 0px;
     background-color: #f7f7f7;
@@ -108,7 +120,7 @@ button {
     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
-.signup-wall{
+.signup-wall {
 	margin-top: 20px;
     padding: 20px 0px 20px 0px;
     background-color: #f7f7f7;
@@ -116,13 +128,13 @@ button {
     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);	
 }
-.login-title{
+.login-title {
     color: #555;
     font-size: 18px;
     font-weight: 400;
     display: block;
 }
-.profile-img{
+.profile-img {
     width: 96px;
     height: 96px;
     margin: 0 auto 10px;
@@ -131,17 +143,18 @@ button {
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
-.new-account{
+.new-account {
     display: block;
     margin-top: 10px;
 }
-h1.error-message{
+
+h1.error-message {
     color: red;
 }
-ul.user-details{
+
+ul.user-details {
     list-style: none;
 }
-
 
 i {
 	position: absolute;
@@ -157,7 +170,40 @@ i {
 	text-decoration: line-through;
 }
 
-.undone {
-    text-decoration: none;
+#ui-id-1 {
+    margin-left:100px;
 }
 
+#ui-id-2 {
+    margin-left: 120px;
+}
+
+.ui-widget-header {
+    background: #6699FF !important;
+    border:none !important;
+}
+
+#dialogList input[type='text'] {
+    margin: 8px 0 0 35px;
+}
+#dialogList input[type='email'] {
+    margin: 8px 0 10px 35px;
+}
+
+#dialogList p {
+    text-align: center;
+    margin: 10px 0 0 0;  
+    font-size: 15px;  
+}
+
+#dialogTask input {
+    margin: 10px;
+}
+
+#addList i  {
+    position: absolute;
+}
+
+#dialogList  {
+    position: relative;
+}

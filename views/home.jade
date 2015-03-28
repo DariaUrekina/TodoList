@@ -8,19 +8,26 @@ block content
                 input#inputList(type='text', placeholder='List...', name="name")
                 button#btnAddList Add List
             ul
-
                 
         #addTask        
             form(name="form", action="/todos", method="post")
                 input#inputTask(type='text', placeholder='Task...', name="name", size="100")
                 button#btnAddTask Add Task 
             ul
-        #dialogList
-            input#name
-            input#email
+        #dialogList(title='Settings')
+            p Change the name of list!
+            input#name(type='text')
+            p Choose users!
+            input#email(type='email')
+            input.btnReady(type='button', placeholder='Ready!', name='button')
 
         #dialogTask
-            input#datepicker_setdate    
+            i.fa.fa-calendar
+            input#datepicker_setdate(type='text', placeholder='Set Date') 
+            i.fa.fa-plus           
+            input#addTask(autofocus='autofocus')
+            i.fa.fa-paperclip
+            input#UploadFile 
 
     // /WRAPPER
 
