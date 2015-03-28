@@ -6,14 +6,16 @@ var formidable=require('formidable');
 var fs=require('fs');
 var favicon = require('static-favicon');
 var logger = require('morgan');
+var multer = require('multer');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var home = require('./routes/home');
 var users = require('./routes/users');
 var tasks = require('./routes/tasks');
-var lists = require('./routes/lists')
-var dbConfig = require('./db')
+var lists = require('./routes/lists');
+var dbConfig = require('./db');
+var done = false;
 
 // Configuring Passport
 
@@ -29,7 +31,6 @@ app.set('view engine', 'jade');
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(favicon());
 app.use(logger('dev'));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -38,17 +39,19 @@ app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+ // FIRST ATTEMP OF MAKING UPLOADER
 app.post('/upload', function(req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
+
         var old_path = files.file.path,
             file_size = files.file.size,
             file_ext = files.file.name.split('.').pop(),
-            index = old_path.lastIndexOf('/') + 1,
+            index = old_path.lastIndexOf('\\') + 1,
             file_name = old_path.substr(index),
             new_path = path.join(process.env.PWD, '/uploads/', file_name + '.' + file_ext);
  
+        console.log(new_path);
         fs.readFile(old_path, function(err, data) {
             fs.writeFile(new_path, data, function(err) {
                 fs.unlink(old_path, function(err) {
@@ -58,6 +61,7 @@ app.post('/upload', function(req, res) {
                     } else {
                         res.status(200);
                         res.json({'success': true});
+
                     }
                 });
             });
