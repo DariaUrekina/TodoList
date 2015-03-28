@@ -9,7 +9,6 @@ Dropzone.options.myDropzone = {
     $.get('/upload', function(data) {
       var files = JSON.parse(data).files;
       for (var i = 0; i < files.length; i++) {
-
         var mockFile = {
           name: files[i].name,
           size: files[i].size,

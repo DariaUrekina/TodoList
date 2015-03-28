@@ -15,8 +15,8 @@ var home = require('./routes/home');
 var users = require('./routes/users');
 var tasks = require('./routes/tasks');
 var lists = require('./routes/lists');
+var uploadManager = require('./routes/uploadManager')
 var dbConfig = require('./db');
-var done = false;
 
 // Configuring Passport
 
@@ -40,41 +40,12 @@ app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session());
-
- // FIRST ATTEMP OF MAKING UPLOADER
-/*app.post('/upload', function(req, res) {
-    var form = new formidable.IncomingForm();
-    form.parse(req, function(err, fields, files) {
-
-        var old_path = files.file.path,
-            file_size = files.file.size,
-            file_ext = files.file.name.split('.').pop(),
-            index = old_path.lastIndexOf('\\') + 1,
-            file_name = old_path.substr(index),
-            new_path = path.join(process.env.PWD, '/uploads/', file_name + '.' + file_ext);
  
-        console.log(new_path);
-        fs.readFile(old_path, function(err, data) {
-            fs.writeFile(new_path, data, function(err) {
-                fs.unlink(old_path, function(err) {
-                    if (err) {
-                        res.status(500);
-                        res.json({'success': false});
-                    } else {
-                        res.status(200);
-                        res.json({'success': true});
-
-                    }
-                });
-            });
-        });
-    });
-});
-*/
 app.use('/home', home);
 app.use('/users', users);
 app.use('/tasks', tasks);
 app.use('/lists', lists);
+app.use('/upload', uploadManager)
 
 
 // Using the flash middleware provided by connect-flash to store messages in session

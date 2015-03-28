@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "blueimp-file-upload-expressjs": "^0.2.10",   
     "bcrypt-nodejs": "*",
     "body-parser": "~1.0.0",
     "connect-flash": "*",

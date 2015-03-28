@@ -1,3 +1,6 @@
+
+var express = require('express');
+var router = express.Router();
 var options = {
   tmpDir: __dirname + '/../public/uploaded/tmp',
   uploadDir: __dirname + '/../public/uploaded/files',
@@ -9,23 +12,24 @@ var options = {
 
 var uploader = require('blueimp-file-upload-expressjs')(options);
 
-module.exports = function(router) {
-  router.get('/upload', function(req, res) {
-    uploader.get(req, res, function(obj) {
-      res.send(JSON.stringify(obj));
-    });
-  });
+module.exports = router;
 
-  router.post('/upload', function(req, res) {
-    uploader.post(req, res, function(obj) {
-      res.send(JSON.stringify(obj));
-    });
-  });
 
-  router.delete('/uploaded/files/:name', function(req, res) {
-    uploader.delete(req, res, function(obj) {
-      res.send(JSON.stringify(obj));
-    });
+router.get('/', function(req, res) {
+  uploader.get(req, res, function(obj) {
+    res.send(JSON.stringify(obj));
   });
-  return router;
-};
+});
+
+router.post('/', function(req, res) {
+  uploader.post(req, res, function(obj) {
+    res.send(JSON.stringify(obj));
+  });
+});
+
+router.delete('/files/:name', function(req, res) {
+  uploader.delete(req, res, function(obj) {
+    res.send(JSON.stringify(obj));
+  });
+});
+  
