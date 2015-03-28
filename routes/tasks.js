@@ -23,7 +23,7 @@ router.post('/', function(req, res, next) {
       if (err) return next(err);
       list.tasks.push(task._id.toString());
       list.save();
-      res.send({state: 'ok!'});
+      res.send(task);
     });
   });
 	

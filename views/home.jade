@@ -7,7 +7,7 @@ block content
             form(name="form", action="/lists", method="post")
                 input#inputList(type='text', placeholder='List...', name="name")
                 button#btnAddList Add List
-            ul#ulTasks
+            ul
 
                 
         #addTask        
@@ -15,6 +15,12 @@ block content
                 input#inputTask(type='text', placeholder='Task...', name="name", size="100")
                 button#btnAddTask Add Task 
             ul
+        #dialogList
+            input#name
+            input#email
+
+        #dialogTask
+            input#datepicker_setdate    
 
     // /WRAPPER
 

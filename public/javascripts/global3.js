@@ -1,6 +1,6 @@
 $(function() {
 "use strict";    
-$(document).ready(function() {
+/*$(document).ready(function() {
      $('#uploadForm').submit(function() {
 
         $(this).ajaxSubmit({
@@ -16,7 +16,7 @@ $(document).ready(function() {
         //Very important line, it disable the page refresh.
     return false;
     });    
-});
+});*/
 
 function sendAjaxPost(url, data, callback) { 
     $.ajax({
@@ -46,7 +46,7 @@ function sendAjaxUpdate(url, data, callback) {
 function Dispatcher() {
     this.schedule = {}; //объект колбэков связынных с событиями 
     this.emit = function(event, options) { //инициирует событие
-        console.log(event);
+        console.log(event, options);
         $.each(this.schedule[event], function(callback) { //для каждого колбэка вызывается функция которая вызывает этот колбэк
             this(options);
         });
@@ -188,6 +188,9 @@ function TaskSettingsView() {
     Component.call(this);
     var that=this;
     this.task=[];
+
+    console.log($('#dialogTask'));
+
     $('#dialogTask').dialog({
         autoOpen:false,
         closeOnEscape:true,

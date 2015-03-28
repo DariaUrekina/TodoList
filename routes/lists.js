@@ -26,12 +26,12 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next){
-	List.create(req.body, function(err, lists){
+	List.create(req.body, function(err, list){
 		if(err) return next(err);
 		res.send(
 			(err === null) ? { msg: '' } : { msg: err }
 			);
-		console.log(lists);
+		console.log(list);
 			
 	});
 });

@@ -4,6 +4,7 @@ var path = require('path');
 var http=require('http');
 var formidable=require('formidable');
 var fs=require('fs');
+var moment = require('moment');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var multer = require('multer');
@@ -34,13 +35,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + '/public'));
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
  // FIRST ATTEMP OF MAKING UPLOADER
-app.post('/upload', function(req, res) {
+/*app.post('/upload', function(req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
 
@@ -68,7 +70,7 @@ app.post('/upload', function(req, res) {
         });
     });
 });
-
+*/
 app.use('/home', home);
 app.use('/users', users);
 app.use('/tasks', tasks);
