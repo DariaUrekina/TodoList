@@ -19,15 +19,19 @@ block content
             input#name(type='text')
             p Choose users!
             input#email(type='email')
-            input.btnReady(type='button', placeholder='Ready!', name='button')
+            //input.btnReady(type='button', placeholder='Ready!', name='button')
+            button.btnReady Ready!
 
-        #dialogTask
-            i.fa.fa-calendar
-            input#datepicker_setdate(type='text', placeholder='Set Date') 
-            i.fa.fa-plus           
-            input#addTask(autofocus='autofocus')
-            i.fa.fa-paperclip
-            input#UploadFile 
+        #dialogTask            
+            .control-input
+                i.fa.fa-calendar
+                input#datepicker_setdate(type='text', placeholder='Set date here...') 
+            .control-input
+                i.fa.fa-plus           
+                input#addTask(autofocus='autofocus', placeholder='Add task here!')
+            .control-input                
+                i.fa.fa-paperclip
+                input#UploadFile(type='text', placeholder='Upload file...')           
 
     // /WRAPPER
 

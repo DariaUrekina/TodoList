@@ -35,8 +35,12 @@ a {
 	width: 275px;
 }
 
-button {
+#addList button {
 	display: none;
+}
+
+#addTask button {
+    display: none;
 }
 
 #addList {
@@ -166,8 +170,8 @@ i {
 	display: none;
 }
 
-.done {
-	text-decoration: line-through;
+input[type='checkbox']:checked + .taskname {
+    text-decoration: line-through;
 }
 
 #ui-id-1 {
@@ -200,10 +204,30 @@ i {
     margin: 10px;
 }
 
-#addList i  {
-    position: absolute;
+#dialogTask  {
+  opacity: 0.8;
 }
 
-#dialogList  {
+.btnReady {
+    margin: 5px 0 10px 80px;
+}
+
+.control-input {
     position: relative;
+
+}
+
+.control-input i {
+   position: absolute;
+   right: 0;
+   top:18px;
+  }
+
+.expire-at {
+    color:red;
+    position: absolute;
+    font-size: 10px;
+    content: red;
+    right: 20px;
+    bottom:0;   
 }

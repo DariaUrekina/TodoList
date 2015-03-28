@@ -6,6 +6,8 @@ var mongoose = require('mongoose');
 var Task = require('../models/tasks.js');
 var List = require('../models/lists.js');
 
+module.exports = router;
+
 /* GET /tasks listing. */
 router.get('/', function(req, res, next) {  
   Task.find(function (err, tasks) {
@@ -45,9 +47,6 @@ router.delete('/:task_id', function(req, res,next) {
       });
       res.send({state:'deleted!'});
     });
-  //Task.removeById(req.params.id, function(err, result) {
-    //    res.send((result === 1) ? { msg: '' } : { msg:'error: ' + err });
-  //irr
 });
 
 
@@ -69,4 +68,5 @@ router.put('/:id', function(req, res, next) {
   });
 });
 
-module.exports = router;
+
+
