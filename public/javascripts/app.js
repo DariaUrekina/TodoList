@@ -8,12 +8,15 @@ Dropzone.options.myDropzone = {
     // load already saved files
     $.get('/upload', function(data) {
       var files = JSON.parse(data).files;
+      console.log(files);
       for (var i = 0; i < files.length; i++) {
-        var mockFile = {          
+        var mockFile = {     
+          task: files[i].id,     
           name: files[i].name,
           size: files[i].size,
         };
-
+       
+        console.log(mockFile);
         self.options.addedfile.call(self, mockFile);
         self.options.thumbnail.call(self, mockFile, files[i].url);
 
@@ -46,7 +49,7 @@ Dropzone.options.myDropzone = {
     self.on("removedfile", function(file) {
       console.log(file);
       $.ajax({
-        url: '/uploaded/files/' + file.name,
+        url: '/uploaded/' + file.name,
         type: 'DELETE',
         success: function(result) {
           console.log(result);
