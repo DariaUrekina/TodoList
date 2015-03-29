@@ -9,10 +9,9 @@ Dropzone.options.myDropzone = {
     $.get('/upload', function(data) {
       var files = JSON.parse(data).files;
       for (var i = 0; i < files.length; i++) {
-        var mockFile = {
+        var mockFile = {          
           name: files[i].name,
           size: files[i].size,
-          type: 'image/jpeg'
         };
 
         self.options.addedfile.call(self, mockFile);
@@ -21,8 +20,6 @@ Dropzone.options.myDropzone = {
       };
 
     });
-
-    // bind events
 
     //New file added
     self.on("addedfile", function(file) {

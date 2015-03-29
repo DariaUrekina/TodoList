@@ -40,8 +40,11 @@ router.delete('/:task_id', function(req, res,next) {
       _.each(lists, function(list) {
         if (err) return next(err); 
         console.log(list);
+
         list.tasks = _.filter(list.tasks, function(task) {
-          return (task._id == req.params.task_id);
+          console.log(task._id);
+          return (task !== req.params.task_id);
+
         });
         list.save();
       });
