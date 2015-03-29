@@ -226,3 +226,10 @@ input[type='checkbox']:checked + .taskname {
     right: 20px;
     bottom:0;   
 }
+
+
+.dz-image {
+    width: 200px !important;
+    height: 150px !important;
+    margin-left: -15px;
+}

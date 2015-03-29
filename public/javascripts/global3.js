@@ -195,10 +195,17 @@ function TaskSettingsView() {
                 id:that.task._id, 
                 date: date 
             });
-        }
+        },
+        showAnim: "blind",
+        dateFormat: "d MM, y", 
+        setDate: null       
     });
-    
-   
+
+    //$('#dropzone').dropzone({
+
+    //});
+
+
     this.on('ShowNewTaskName', this.onShowNewTaskName);
 
 
@@ -301,6 +308,21 @@ function TaskData(){
             that.emit('showTasks', listByTasks);
         });
     };
+
+   /*this.onUploadFiles = function(options) {
+        $.getJSON('/upload', function(data))
+   }
+     /*$.get('/upload', function(data) {
+      var files = JSON.parse(data).files;
+      console.log(files);
+      for (var i = 0; i < files.length; i++) {
+        var mockFile = {     
+          task: files[i].id,     
+          name: files[i].name,
+          size: files[i].size,
+        };*/
+
+
     this.onAddTask = function(newTask) {
         newTask.list_id=selectedListById;
         if (newTask.task.name!='') {

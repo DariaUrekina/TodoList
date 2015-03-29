@@ -10,18 +10,14 @@ Dropzone.options.myDropzone = {
       var files = JSON.parse(data).files;
       console.log(files);
       for (var i = 0; i < files.length; i++) {
-        var mockFile = {     
-          task: files[i].id,     
+        var mockFile = {          
           name: files[i].name,
-          size: files[i].size,
-        };
-       
+          size: files[i].size
+        };       
         console.log(mockFile);
         self.options.addedfile.call(self, mockFile);
         self.options.thumbnail.call(self, mockFile, files[i].url);
-
       };
-
     });
 
     //New file added
@@ -37,25 +33,29 @@ Dropzone.options.myDropzone = {
 
     // File upload Progress
     self.on("totaluploadprogress", function(progress) {
-      console.log("progress ", progress);
+      console.log("progress ", progress); 
       $('.roller').width(progress + '%');
     });
 
     self.on("queuecomplete", function(progress) {
       $('.meter').delay(999).slideUp(999);
-    });
+    }); 
 
     // On removing file
-    self.on("removedfile", function(file) {
+    self.on('removeFile', function(file) {
+      self.removeFile(file);
+    });
+
+    /*self.on("removedfile", function(file) {
       console.log(file);
       $.ajax({
-        url: '/uploaded/' + file.name,
+        url: '/uploaded/files/' + file.name,
         type: 'DELETE',
         success: function(result) {
           console.log(result);
         }
       });
-    });
+    });*/
 
   }
 };
