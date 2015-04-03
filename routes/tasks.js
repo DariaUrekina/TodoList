@@ -32,19 +32,15 @@ router.post('/', function(req, res, next) {
 });
 
 /*  DELETE tasks */
-router.delete('/:task_id', function(req, res,next) {
-  // @@TODO get list which has task_id in its tasks array.
-  // @@TODO remove id from array 
-    Task.remove({"_id": {"$oid": req.params.task_id}});
+router.delete('/:task_id', function(req, res,next) {   
+  Task.remove({"_id": {"$oid": req.params.task_id}});
     List.find({ tasks: req.params.task_id }, function(err, lists) {
       _.each(lists, function(list) {
         if (err) return next(err); 
         console.log(list);
-
         list.tasks = _.filter(list.tasks, function(task) {
           console.log(task._id);
           return (task !== req.params.task_id);
-
         });
         list.save();
       });

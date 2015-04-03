@@ -5,4 +5,4 @@ mongod.lock
 /data
 *.0
 *.ns
-/uploads
+/public/uploaded

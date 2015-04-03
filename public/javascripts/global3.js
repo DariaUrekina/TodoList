@@ -27,14 +27,14 @@ function sendAjaxUpdate(url, data, callback) {
 }
 
 function Dispatcher() {
-    this.schedule = {}; //объект колбэков связынных с событиями 
-    this.emit = function(event, options) { //инициирует событие
+    this.schedule = {}; 
+    this.emit = function(event, options) { 
         console.log(event, options);
-        $.each(this.schedule[event], function(callback) { //для каждого колбэка вызывается функция которая вызывает этот колбэк
+        $.each(this.schedule[event], function(callback) { 
             this(options);
         });
     };
-    this.on = function(event, callback) { //связывание события с действием 
+    this.on = function(event, callback) {
         if ( typeof this.schedule[event] !== 'undefined') {
             this.schedule[event].push(callback);
         }
@@ -54,12 +54,10 @@ function Component() {
     };
 }
 
-
-
 function ListView() {
     Component.call(this);
     this.listElement = $('#addList ul');
-    this.onShowLists = function(listByLists) {
+    this.onUpdatedListItem = function(listByLists) {
             var liContent='';
             $.each(listByLists, function(list){
                 liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
@@ -68,39 +66,35 @@ function ListView() {
             
     };
     
-    this.on('showLists', this.onShowLists);
-    this.emit('LoadLists', {});
+    this.on('UpdatedListItem', this.onUpdatedListItem);
+    this.emit('InitListView', {});
 
     var that = this;
     $('#addList ul').click(function(event) {
         if (event.target.tagName === 'LI') {
-            that.emit('LoadTasks', {
+            that.emit('ClickedListItem', {
                 id:event.target.dataset.listid
             });                  
         }
-    });
-
-    $('#btnAddList').on('click', function(event) {
-        event.preventDefault();        
-        that.emit('addList', {
-            'name' : $('#addList input').val()
-        });
-        $('#addList input').val('');
-    });    
-
-    $('#addList ul').on('click', function(event) {
         if (event.target.tagName=='I'){
-            that.emit('removeList', {
+            that.emit('RemovedListItem', {
                 id:event.target.parentNode.dataset.listid
             });
         }
     });
 
-   
+    $('#btnAddList').on('click', function(event) {
+        event.preventDefault();        
+        that.emit('AddedListItem', {
+            'name' : $('#addList input').val()
+        });
+        $('#addList input').val('');
+    });    
+
     $('#addList ul').dblclick(function(event) {
         if(event.target.tagName=='LI') {
             $('#dialogList').dialog('open');
-            that.emit('PutListNameInInput', {
+            that.emit('DblClickedListItem', {
                 id:event.target.dataset.listid
             });
         }
@@ -112,7 +106,7 @@ function TaskView() {
     Component.call(this);    
     var that=this;
     var checkbox;
-    this.onShowTasks = function(listByTasks) {
+    this.onUpdatedTaskItems = function(listByTasks) {
         var liContent='';       
         $.each(listByTasks, function(task) {
             var formatedExpireAt;
@@ -131,11 +125,11 @@ function TaskView() {
         });
         $('#addTask ul').html(liContent);
     };
-    this.on('showTasks', this.onShowTasks);
+
 
     $('#btnAddTask').on('click', function(event) {
         event.preventDefault();          
-        that.emit('addTask', {
+        that.emit('AddedTaskItem', {
             task: {
                 'name': $('#addTask input').val()
             } 
@@ -145,12 +139,12 @@ function TaskView() {
 
     $('#addTask ul').on('click', function(event) {
         if (event.target.tagName=='I'){
-            that.emit('removeTask', {
+            that.emit('RemovedTaskItem', {
                 id:event.target.parentNode.dataset.taskid
             });
         };
         if (event.target.tagName=='INPUT') {
-            that.emit('ifDoneTask', {
+            that.emit('CheckedTaskItem', {
                 id:event.target.parentNode.dataset.taskid,
                 done: event.target.checked
             });
@@ -160,19 +154,20 @@ function TaskView() {
     $('#addTask ul').dblclick(function(event) {
         if(event.target.tagName=='LI') {
             $('#dialogTask').dialog('open');
-            that.emit('PutTaskNameInDialog', {
+            that.emit('DblClickedTaskItem', {
                 id:event.target.dataset.taskid
             });
         }
     });    
+
+    this.on('UpdatedTaskItems', this.onUpdatedTaskItems);
 }
+
 
 function TaskSettingsView() {
     Component.call(this);
     var that=this;
     this.task=[];
-
-    console.log($('#dialogTask'));
 
     $('#dialogTask').dialog({
         autoOpen:false,
@@ -183,15 +178,51 @@ function TaskSettingsView() {
         show: { effect: "drop", direction: "right" },
         hide: { effect: "drop", direction: "right" }
     });
+
+    $('#my-dropzone').dropzone({
+        url: '/upload',
+        init: function() {
+            var self = this;
+            self.options.addRemoveLinks = true;
+            self.options.dictRemoveFile = "Delete";
+
+            self.on('addedfile', function(file) {
+                console.log('new file added ', file);
+            });
+
+            self.on('sending', function(file, xhr, formData) {
+                console.log('upload started', that.task);
+                formData.append('task_id', that.task._id);
+                $('.meter').show();
+            });
+
+    
+            self.on('totaluploadprogress', function(progress) {
+                console.log('progress ', progress); 
+                $('.roller').width(progress + '%');
+            });
+
+            self.on('queuecomplete', function(progress) {
+                $('.meter').delay(999).slideUp(999);
+            }); 
+
+            self.on('removeFile', function(file) {
+                self.removeFile(file);
+            }); 
+
+            //self.options.addedfile(mockFile);
+            //self.options.thumbnail(mockFile, files[i].url);         
+        }      
+    });
    
-    this.onShowNewTaskName = function(task) {
+    this.onSelectedTaskItem = function(task) {
         that.task=task[0];
         $('#ui-id-1').html(that.task.name);
     }
     
     $('#datepicker_setdate' ).datepicker({     
         onSelect: function(date) {                
-            that.emit('setDate', {
+            that.emit('SelectedDate', {
                 id:that.task._id, 
                 date: date 
             });
@@ -201,14 +232,7 @@ function TaskSettingsView() {
         setDate: null       
     });
 
-    //$('#dropzone').dropzone({
-
-    //});
-
-
-    this.on('ShowNewTaskName', this.onShowNewTaskName);
-
-
+    this.on('SelectedTaskItem', this.onSelectedTaskItem);
 }
 
 function ListSettingsView() {
@@ -221,7 +245,7 @@ function ListSettingsView() {
         closeOnEscape:true,
     });  
 
-    this.onShowNewListName = function(list) {
+    this.onSelectedListItem = function(list) {
         console.log(list);
         that.list=list[0];
         $('#name').val(that.list.name);
@@ -229,14 +253,14 @@ function ListSettingsView() {
     
     $('.btnReady').on('click', function(event) {
         event.preventDefault();
-        that.emit('ChangeListName', {
+        that.emit('ChangedListName', {
             id:that.list._id,
             name: $('#name').val()
         });
         $('#dialogList').dialog('close');
     }); 
 
-    this.on('ShowNewListName', this.onShowNewListName);
+    this.on('SelectedListItem', this.onSelectedListItem);
 }   
 
 function ListData() {
@@ -245,54 +269,54 @@ function ListData() {
     var listByLists = []; 
     var selectedListById;
     var selectedListByName;
-    this.onAddList = function (newList) {
+    this.onAddedListItem = function (newList) {
         if (newList.name!=''){
             sendAjaxPost('/lists', newList, function(list) {
                 listByLists.push(list);                
-                that.emit('showLists', listByLists);
+                that.emit('UpdatedListItem', listByLists);
             });
         }   
     }
      
-    this.onLoadLists = function(){
+    this.onInitListView = function(){
         $.getJSON('/lists', function(data) {    
             listByLists = data;
-            that.emit('showLists', listByLists);
+            that.emit('UpdatedListItem', listByLists);
         });
     };
 
-    this.onRemoveLists = function(options) {
+    this.onRemovedListItem = function(options) {
         sendAjaxDelete('/lists/' + options.id, function() {
             listByLists=listByLists.filter(function(list){
                 return list._id!=options.id;
             });
-            that.emit('showLists', listByLists);
+            that.emit('UpdatedListItem', listByLists);
         });
     }
 
-    this.onPutListNameInInput = function(options) { 
+    this.onDblClickedListItem = function(options) { 
         selectedListById=listByLists.filter(function(list) {
            return  list._id==options.id;           
         });         
-        that.emit('ShowNewListName', selectedListById)
+        that.emit('SelectedListItem', selectedListById)
     }
 
-    this.onChangeListName = function(options) {
+    this.onChangedListName = function(options) {
         sendAjaxUpdate('/lists/' + options.id, {name:options.name}, function(list){
             for (var i = 0; i < listByLists.length; i++) {
                 if (listByLists[i]._id === options.id) {
                     listByLists[i].name = options.name;
                 }
             } 
-            that.emit('showLists', listByLists);      
+            that.emit('UpdatedListItem', listByLists);      
         });
     }
 
-    this.on('ChangeListName', this.onChangeListName);
-    this.on('PutListNameInInput', this.onPutListNameInInput);
-    this.on('removeList', this.onRemoveLists);
-    this.on('addList', this.onAddList);
-    this.on('LoadLists', this.onLoadLists);
+    this.on('ChangedListName', this.onChangedListName);
+    this.on('DblClickedListItem', this.onDblClickedListItem);
+    this.on('RemovedListItem', this.onRemovedListItem);
+    this.on('AddedListItem', this.onAddedListItem);
+    this.on('InitListView', this.onInitListView);
 }
 
 function TaskData(){
@@ -301,96 +325,107 @@ function TaskData(){
     var selectedListById;
     var selectedTaskById;
     var listByTasks=[];
-    this.onLoadTasks = function(options){
+    var files=[];
+    this.onClickedListItem = function(options){
         $.getJSON('/lists/' + options.id, function(data) {
             listByTasks= data;
             selectedListById=options.id;
-            that.emit('showTasks', listByTasks);
+            that.emit('UpdatedTaskItems', listByTasks);
         });
     };
-
-   /*this.onUploadFiles = function(options) {
-        $.getJSON('/upload', function(data))
-   }
-     /*$.get('/upload', function(data) {
-      var files = JSON.parse(data).files;
-      console.log(files);
-      for (var i = 0; i < files.length; i++) {
-        var mockFile = {     
-          task: files[i].id,     
-          name: files[i].name,
-          size: files[i].size,
-        };*/
+   
+    this.onLoadLists = function(){
+        $.getJSON('/lists', function(data) {    
+            listByLists = data;
+            that.emit('UpdatedListItem', listByLists);
+        });
+    };    
 
 
-    this.onAddTask = function(newTask) {
+    this.onAddedTaskItem = function(newTask) {
         newTask.list_id=selectedListById;
         if (newTask.task.name!='') {
             sendAjaxPost('/tasks' , newTask, function(task) {
                 listByTasks.push(task);
-                that.emit('showTasks', listByTasks);
+                that.emit('UpdatedTaskItems', listByTasks);
             });
         }    
-    }
+    };
 
-    this.onRemoveTask = function(options) {
+    this.onRemovedTaskItem = function(options) {
         sendAjaxDelete('/tasks/' + options.id, function() {
             listByTasks = listByTasks.filter(function(task) {
                 return task._id != options.id;
             });
-            that.emit('showTasks', listByTasks);
+            that.emit('UpdatedTaskItems', listByTasks);
         });
-    }
+    };
 
-    this.onPutTaskNameInDialog = function(options) {
+    this.onDblClickedTaskItem = function(options) {
         selectedTaskById = listByTasks.filter(function(task){
             return task._id==options.id;
         });
-        that.emit('ShowNewTaskName', selectedTaskById)
-    }
+        that.emit('SelectedTaskItem', selectedTaskById)
+    };
 
-    this.onSetDate = function(options) {
+    this.onSelectedDate = function(options) {
         sendAjaxUpdate('/tasks/' + options.id, {expireAt: options.date}, function(task){ 
             for (var i=0; i<listByTasks.length; i++){
                 if (listByTasks[i]._id === options.id) {
                     listByTasks[i].expireAt=options.date;
                 }
             }
-            that.emit('showTasks', listByTasks);    
+            that.emit('UpdatedTaskItems', listByTasks);    
         });
-    }
+    };
 
-    this.onIfDoneTask = function(options) {
+    this.onCheckedTaskItem = function(options) {
         var doneTasks = [];
         sendAjaxUpdate('/tasks/' + options.id, {done:options.done}, function(task) { 
             for (var i=0; i<listByTasks.length; i++) {
                 if (listByTasks[i]._id===options.id) {
                     listByTasks[i].done=options.done;
                     doneTasks.push(listByTasks[i]); 
-                    console.log(doneTasks);           
-
-                    /*var tmp = listByTasks[i];
-                    listByTasks.splice(i,1);
-                    listByTasks.push(tmp);
-                    console.log(listByTasks);*/
+                    console.log(doneTasks);   
                 } 
             }
-            that.emit('showTasks', listByTasks);
+            that.emit('UpdatedTaskItems', listByTasks);
         });    
-    }   
+    };   
 
-    this.on('ifDoneTask', this.onIfDoneTask);
-    this.on('setDate', this.onSetDate); 
-    this.on('PutTaskNameInDialog', this.onPutTaskNameInDialog);
-    this.on('removeTask', this.onRemoveTask);
-    this.on('addTask', this.onAddTask);
-    this.on('LoadTasks', this.onLoadTasks);
+    this.on('CheckedTaskItem', this.onCheckedTaskItem);
+    this.on('SelectedDate', this.onSelectedDate); 
+    this.on('DblClickedTaskItem', this.onDblClickedTaskItem);
+    this.on('RemovedTaskItem', this.onRemovedTaskItem);
+    this.on('AddedTaskItem', this.onAddedTaskItem);
+    this.on('ClickedListItem', this.onClickedListItem);
 }
 
-var TaskData = new TaskData();
-var ListData = new ListData();
+
+function ImageData() {
+    Component.call(this);
+    var that = this;
+    var mockFile= {};
+     this.onShowImages = function(options) {
+        $.getJSON('/upload', function(data) {
+            files=data;
+            for (var i = 0; i < files.length; i++) {
+                mockFile = {        
+                    name: files[i].name,
+                    size: files[i].size
+                }
+            }  
+            that.emit('showImage', mockFile)           
+        });
+    };
+}
+
+
+var taskData = new TaskData();
+var listData = new ListData();
 var listView = new ListView();
 var taskView = new TaskView();
+var imageData = new ImageData();
 var taskSettingsView = new TaskSettingsView();
 var listSettingsView = new ListSettingsView();
 });

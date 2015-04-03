@@ -14,7 +14,6 @@ a {
     margin: 2px;
     padding: 7px;
     border-radius: 5px;
-	border: 1px solid white;	
 	background-color: #f4f4f4;
 	width: 70%;	
 	opacity: 0.8;
@@ -22,7 +21,7 @@ a {
 }
 
 #addTask li:hover {
-     background-color: #0099cc; 
+    background-color: #0099cc; 
 }
 
 
@@ -227,6 +226,13 @@ input[type='checkbox']:checked + .taskname {
     bottom:0;   
 }
 
+#my-dropzone {
+    cursor: pointer;
+    min-height: 150px;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    background: white;
+    padding: 20px 20px; 
+}
 
 .dz-image {
     width: 200px !important;

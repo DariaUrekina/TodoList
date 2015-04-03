@@ -1,5 +1,5 @@
-
 var express = require('express');
+var format = require('util').format;
 var router = express.Router();
 var options = {
   tmpDir: __dirname + '/../public/uploaded/tmp',
@@ -22,6 +22,8 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
+  console.log(req.params);
+  console.log(req);
   uploader.post(req, res, function(obj) {
     res.send(JSON.stringify(obj));
   });

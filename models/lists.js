@@ -1,9 +1,10 @@
 var mongoose = require('mongoose'); 
-//var Tasks = require('./tasks');
 
 var ListsSchema =  new mongoose.Schema({
 	name: String,
-	tasks: Array
+	tasks: Array,
+	createdAt: Date,
+	updatedAt: Date
 })
 
 module.exports = mongoose.model('Lists', ListsSchema);

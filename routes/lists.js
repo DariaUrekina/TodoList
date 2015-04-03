@@ -4,11 +4,12 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var List = require('../models/lists.js');
 var Task = require('../models/tasks.js');
+var moment = require('moment');
 
 module.exports = router;
 
 router.get('/', function(req, res, next) { 
-	List.find(function(err, lists){
+	List.find().sort('createdAt').find(function(err, lists){
 		if(err) return next(err);
 		res.json(lists);
 	});
@@ -25,21 +26,18 @@ router.get('/:id', function(req, res, next) {
 });
 
 
-/* POST /lists */
 router.post('/', function(req, res, next){
+  req.body.createdAt = moment().format(); 
+  req.body.updatedAt=moment().format();
 	List.create(req.body, function(err, list){
 		if(err) return next(err);
 		res.json(list);
+    console.log(req.body);
 	});
 });
 
 
-/* DELETE list*/
 router.delete('/:id', function(req,res, next){
-	/*var listToDelete=req.params.id;
-	List.removeById(listToDelete, function(err, result) {
-		res.send((result===1) ? {msg: ''} : {msg:'error' + err});
-	});*/
 	List.remove({_id: req.params.id}, function(err, list) {
       if (err) return next(err);
       res.send({state: 'ok!'});

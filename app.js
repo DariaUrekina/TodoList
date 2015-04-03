@@ -101,6 +101,4 @@ mongoose.connect('mongodb://localhost/todoApp', function(err) {
 });
 
 
-
-
 module.exports = app;
