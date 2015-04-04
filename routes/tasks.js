@@ -5,12 +5,14 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Task = require('../models/tasks.js');
 var List = require('../models/lists.js');
+var moment = require('moment');
+
 
 module.exports = router;
 
 /* GET /tasks listing. */
 router.get('/', function(req, res, next) {  
-  Task.find(function (err, tasks) {
+  Task.find().sort('createdAt').find(function (err, tasks) {
     if (err) return next(err);  
     res.json(tasks);      
   });
@@ -19,6 +21,8 @@ router.get('/', function(req, res, next) {
 
 /* POST /tasks */
 router.post('/', function(req, res, next) {
+  req.body.createdAt = moment().format(); 
+  req.body.updatedAt=moment().format();
   Task.create(req.body.task, function (err, task) {
     if (err) return next(err);
     List.findById(req.body.list_id, function(err, list) {
