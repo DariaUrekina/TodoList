@@ -15,17 +15,6 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.post('/', function(req, res, next){
-  req.body.createdAt = moment().format(); 
-  req.body.updatedAt=moment().format();
-	List.create(req.body, function(err, list){
-		if(err) return next(err);
-		res.json(list);
-    console.log(req.body);
-	});
-});
-
-
 
 
 

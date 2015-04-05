@@ -31,8 +31,7 @@ router.post('/', function(req, res, next) {
       list.save();
       res.send(task);
     });
-  });
-	
+  });	
 });
 
 /*  DELETE tasks */

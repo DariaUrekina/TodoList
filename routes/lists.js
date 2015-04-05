@@ -11,7 +11,7 @@ module.exports = router;
 
 router.get('/', function(req, res, next) { 
   console.log(req.user);
-	List.find().sort('createdAt').find(function(err, lists){
+	List.find().sort('createdAt').find({'_id': {$in:req.user.lists } },function(err, lists){
 		if(err) return next(err);
 		res.json(lists);
 	});
@@ -36,9 +36,10 @@ router.post('/', function(req, res, next){
 		if(err) return next(err);
     user.lists.push(list._id.toString());
     user.save(function() {
-      res.json(list);
+      res.send(list);
       console.log(req.body);
     });
+
 	});
 });
 
