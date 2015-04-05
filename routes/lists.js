@@ -4,11 +4,13 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var List = require('../models/lists.js');
 var Task = require('../models/tasks.js');
+var User = require('../models/user.js')
 var moment = require('moment');
 
 module.exports = router;
 
 router.get('/', function(req, res, next) { 
+  console.log(req.user);
 	List.find().sort('createdAt').find(function(err, lists){
 		if(err) return next(err);
 		res.json(lists);
@@ -29,10 +31,14 @@ router.get('/:id', function(req, res, next) {
 router.post('/', function(req, res, next){
   req.body.createdAt = moment().format(); 
   req.body.updatedAt=moment().format();
+  var user = req.user;
 	List.create(req.body, function(err, list){
 		if(err) return next(err);
-		res.json(list);
-    console.log(req.body);
+    user.lists.push(list._id.toString());
+    user.save(function() {
+      res.json(list);
+      console.log(req.body);
+    });
 	});
 });
 

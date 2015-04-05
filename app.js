@@ -30,6 +30,11 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
+
+// Initialize Passport
+var initPassport = require('./passport/init');
+initPassport(passport);
+
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -53,9 +58,7 @@ app.use('/upload', uploadManager)
 var flash = require('connect-flash');
 app.use(flash());
 
-// Initialize Passport
-var initPassport = require('./passport/init');
-initPassport(passport);
+
 
 var routes = require('./routes/index')(passport);
 app.use('/', routes);
