@@ -4,14 +4,14 @@ block content
     // Wrapper
     #wrapper  
         #addList 
-            form(name="form", action="/lists", method="post")
-                input#inputList(type='text', placeholder='List...', name="name")
+            form(name='form', action='/lists', method='post')
+                input#inputList(type='text', placeholder='List...', name='name')
                 button#btnAddList Add List
             ul
                 
         #addTask        
-            form(name="form", action="/todos", method="post")
-                input#inputTask(type='text', placeholder='Task...', name="name", size="100")
+            form(name='form', action='/todos', method='post')
+                input#inputTask(type='text', placeholder='Task...', name='name', size='100')
                 button#btnAddTask Add Task 
             ul
 
@@ -21,8 +21,9 @@ block content
             p Change the name of list!
             input#name(type='text')
             p Choose users!
-            input#email(type='email')
-            button.btnReady Ready!
+            form(name='form', method='post') 
+                input(type='email', placeholder='Enter your email')
+                input(class='btnReady', type='submit', value='Submit')
 
         #dialogTask            
             .control-input

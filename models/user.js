@@ -7,7 +7,8 @@ var UsersSchema =  new mongoose.Schema({
     gender: String,
     address: String,
     tasks: Array,
-    lists: Array
+    lists: Array,
+    assigned:Array
 })
 
 module.exports = mongoose.model('User', UsersSchema);

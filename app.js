@@ -7,7 +7,6 @@ var fs=require('fs');
 var moment = require('moment');
 var favicon = require('static-favicon');
 var logger = require('morgan');
-var logout = require('express-passport-logout');
 var multer = require('multer');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');

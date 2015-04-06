@@ -252,12 +252,18 @@ function ListSettingsView() {
     }
     
     $('.btnReady').on('click', function(event) {
-        event.preventDefault();
-        that.emit('ChangedListName', {
-            id:that.list._id,
-            name: $('#name').val()
-        });
-        $('#dialogList').dialog('close');
+        if (event.target.parentNode.checkValidity()) {
+            event.preventDefault();
+            that.emit('ChangedListName', {
+                id:that.list._id,
+                name: $('#name').val()
+            });
+            //that.emit('AssignList', {
+              //  id:that.list._id,
+                //email: $('#list').val()
+            //})
+            $('#dialogList').dialog('close');
+        }
     }); 
 
     this.on('SelectedListItem', this.onSelectedListItem);
@@ -428,4 +434,4 @@ var taskView = new TaskView();
 var imageData = new ImageData();
 var taskSettingsView = new TaskSettingsView();
 var listSettingsView = new ListSettingsView();
-});
+}); 

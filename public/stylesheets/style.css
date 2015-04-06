@@ -240,14 +240,12 @@ input[type='checkbox']:checked + .taskname {
     margin-left: -15px;
 }
 
-.ui-dialog {
-    top: 37px !important;
-}
 
 .fa.fa-sign-out {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     cursor: pointer;
+    text-decoration: none;
 }
 
