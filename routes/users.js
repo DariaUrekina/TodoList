@@ -19,5 +19,24 @@ router.get('/logout', function(req, res){
   res.redirect('/');
 });
 
+router.post('/', function(req, res, next){
+  req.body.createdAt = moment().format(); 
+  req.body.updatedAt=moment().format();
+  var user = req.user;
+	List.create(req.body, function(err, list){
+		if(err) return next(err);
+    user.lists.push(list._id.toString());
+    user.save(function() {
+      res.send(list);
+      console.log(req.body);
+    });
+	});
+});
+
+
+router.post('/l\', function(req,res,next) {
+
+});
+
 
 
