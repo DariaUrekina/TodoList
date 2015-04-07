@@ -15,8 +15,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
+    req.logout();
+ 	res.redirect('/');
 });
 
 router.post('/', function(req, res, next){
@@ -25,18 +25,25 @@ router.post('/', function(req, res, next){
   var user = req.user;
 	List.create(req.body, function(err, list){
 		if(err) return next(err);
-    user.lists.push(list._id.toString());
-    user.save(function() {
-      res.send(list);
-      console.log(req.body);
-    });
+    	user.lists.push(list._id.toString());
+    	user.save(function() {
+      		res.send(list);
+      		console.log(req.body);
+   		 });
 	});
 });
 
 
-router.post('/l\', function(req,res,next) {
-
+router.post('/assigments', function(req,res,next) {
+	var email = User.find({'email': req.body.user}); 
+	console.log('email= ' + email);
+	List.create(req.body, function(err, list) {
+		if(err) return next(err);
+		
+	});
 });
+
+
 
 
 

@@ -39,7 +39,6 @@ router.post('/', function(req, res, next){
       res.send(list);
       console.log(req.body);
     });
-
 	});
 });
 

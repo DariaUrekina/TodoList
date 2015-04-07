@@ -319,13 +319,14 @@ function ListData() {
     }
 
     this.onAssignedList = function(options) {
-        sendAjaxPost('/lists', {id:options.id}, function(list) { //лист должен добавляться в листы, т.е. тут по идее все правильно 
-            listByLists.push(list); //но я не понимаю, как теперь перейти к роуту с юзерами 
-            that.emit('UpdatedListItem', listByLists); //где этот роут писать в юзерах или листах? логично, что в юзерах, но тогда как? 
+        sendAjaxPost('users/assigments', {id:options.id}, function(list) { 
+            //listByLists.push(list);
+            console.log('ooooooooooooooooooooooooooooops')
+           // that.emit('UpdatedListItem', listByLists);
         });
     }
 
-    this.on('AssignedList'. this.onAssignedList)
+    this.on('AssignedList', this.onAssignedList)
     this.on('ChangedListName', this.onChangedListName);
     this.on('DblClickedListItem', this.onDblClickedListItem);
     this.on('RemovedListItem', this.onRemovedListItem);
