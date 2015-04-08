@@ -19,29 +19,24 @@ router.get('/logout', function(req, res){
  	res.redirect('/');
 });
 
-router.post('/', function(req, res, next){
-  req.body.createdAt = moment().format(); 
-  req.body.updatedAt=moment().format();
-  var user = req.user;
-	List.create(req.body, function(err, list){
+
+router.post('/assigments', function(req,res,next) {		
+	var newlist=[];
+	var id =req.body.id;
+	User.find({'email': req.body.email}, function(err, user) {
+		console.log(user);
+		console.log(req.body.email);
+		console.log(id);		
 		if(err) return next(err);
-    	user.lists.push(list._id.toString());
-    	user.save(function() {
-      		res.send(list);
-      		console.log(req.body);
-   		 });
-	});
+		user[0].lists.push(id);
+		user[0].save(function(list) {
+	    	res.send(list);
+	    	console.log( req.body);
+    	});
+	}); 
 });
 
 
-router.post('/assigments', function(req,res,next) {
-	var email = User.find({'email': req.body.user}); 
-	console.log('email= ' + email);
-	List.create(req.body, function(err, list) {
-		if(err) return next(err);
-		
-	});
-});
 
 
 

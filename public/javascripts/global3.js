@@ -319,10 +319,9 @@ function ListData() {
     }
 
     this.onAssignedList = function(options) {
-        sendAjaxPost('users/assigments', {id:options.id}, function(list) { 
-            //listByLists.push(list);
+        sendAjaxPost('/users/assigments', {id:options.id, email:options.email}, function(list) { 
             console.log('ooooooooooooooooooooooooooooops')
-           // that.emit('UpdatedListItem', listByLists);
+            that.emit('UpdatedListItem', listByLists);
         });
     }
 

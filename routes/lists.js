@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+var _ = require('lodash');
 var mongoose = require('mongoose');
 var List = require('../models/lists.js');
 var Task = require('../models/tasks.js');
@@ -27,24 +27,25 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
-
 router.post('/', function(req, res, next){
   req.body.createdAt = moment().format(); 
   req.body.updatedAt=moment().format();
   var user = req.user;
 	List.create(req.body, function(err, list){
+    console.log('req.body ' + req.body)
 		if(err) return next(err);
     user.lists.push(list._id.toString());
     user.save(function() {
       res.send(list);
       console.log(req.body);
     });
+
 	});
 });
 
-
+//@@todo fix lists removal
 router.delete('/:id', function(req,res, next){
-	List.remove({_id: req.params.id}, function(err, list) {
+	   ({_id: req.params.id}, function(err, list) {
       if (err) return next(err);
       res.send({state: 'ok!'});
     });

@@ -1,7 +1,6 @@
 var express = require('express');
 var _ = require('lodash');
 var router = express.Router();
-
 var mongoose = require('mongoose');
 var Task = require('../models/tasks.js');
 var List = require('../models/lists.js');
