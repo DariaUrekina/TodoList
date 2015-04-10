@@ -1,6 +1,6 @@
 $(function() {
 "use strict";    
-var socket = io.connect('http://localhost:3000');
+
 function sendAjaxPost(url, data, callback) { 
     $.ajax({
         type: 'POST',
@@ -319,11 +319,17 @@ function ListData() {
     }
 
     this.onAssignedList = function(options) {
-        sendAjaxPost('/users/assigments', {id:options.id, email:options.email}, function(list) { 
-            
-            console.log('AssignedListSend')
+        var socket = io.connect('http://localhost:3000');
+        var sessionId='';
+        sendAjaxPost('/users/assigments', {id:options.id, email:options.email}, function(list) {             
+            console.log('AssignedListSend');
+            socket.on('connect', function () {
+                console.log('consoleConnected ' + sessionId);
+                socket.emit('SharingList', {id: options.id, email:options.email});
+            });
+             
             that.emit('UpdatedListItem', listByLists);
-        });
+        }); 
     }
 
     this.on('AssignedList', this.onAssignedList)

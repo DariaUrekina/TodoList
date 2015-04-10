@@ -44,12 +44,17 @@ router.post('/', function(req, res, next){
 });
 
 //@@todo fix lists removal
-router.delete('/:id', function(req,res, next){
-	   ({_id: req.params.id}, function(err, list) {
+/*	   ({_id: req.params.id}, function(err, list) {
       if (err) return next(err);
       res.send({state: 'ok!'});
     });
-});
+});*/
+router.delete('/:id', function(req,res, next){
+  List.remove({_id: req.params.id}, function(err, list) {
+       if (err) return next(err);
+       res.send({state: 'ok!'});
+  });
+});       
 
 router.put('/:id', function(req, res, next) {
   List.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
