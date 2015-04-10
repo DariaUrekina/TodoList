@@ -1,6 +1,6 @@
 $(function() {
 "use strict";    
-
+var socket = io.connect('http://localhost:3000');
 function sendAjaxPost(url, data, callback) { 
     $.ajax({
         type: 'POST',
@@ -320,7 +320,8 @@ function ListData() {
 
     this.onAssignedList = function(options) {
         sendAjaxPost('/users/assigments', {id:options.id, email:options.email}, function(list) { 
-            console.log('ooooooooooooooooooooooooooooops')
+            
+            console.log('AssignedListSend')
             that.emit('UpdatedListItem', listByLists);
         });
     }

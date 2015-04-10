@@ -11,12 +11,14 @@ var multer = require('multer');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var Static = require('node-static');
 var home = require('./routes/home');
 var users = require('./routes/users');
 var tasks = require('./routes/tasks');
 var lists = require('./routes/lists');
 var uploadManager = require('./routes/uploadManager')
 var dbConfig = require('./db');
+
 
 // Configuring Passport
 
@@ -57,8 +59,6 @@ app.use('/upload', uploadManager)
  // and displaying in templates
 var flash = require('connect-flash');
 app.use(flash());
-
-
 
 var routes = require('./routes/index')(passport);
 app.use('/', routes);
