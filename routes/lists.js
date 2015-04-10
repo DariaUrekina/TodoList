@@ -3,7 +3,7 @@ var router = express.Router();
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var List = require('../models/lists.js');
-var Task = require('../models/tasks.js');
+var Task= require('../models/tasks.js');
 var User = require('../models/user.js')
 var moment = require('moment');
 
@@ -43,18 +43,15 @@ router.post('/', function(req, res, next){
 	});
 });
 
-//@@todo fix lists removal
-/*	   ({_id: req.params.id}, function(err, list) {
-      if (err) return next(err);
-      res.send({state: 'ok!'});
+router.delete('/:id', function(req, res, next) {
+  var user = req.user;
+    user.lists = _.filter(user.lists, function(list) {
+      return (list != req.params.id)
     });
-});*/
-router.delete('/:id', function(req,res, next){
-  List.remove({_id: req.params.id}, function(err, list) {
-       if (err) return next(err);
-       res.send({state: 'ok!'});
-  });
-});       
+    user.save();
+    res.send({state: 'List deleted'});
+});
+    
 
 router.put('/:id', function(req, res, next) {
   List.findByIdAndUpdate(req.params.id, req.body, function (err, post) {

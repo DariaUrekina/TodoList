@@ -1,6 +1,5 @@
 function Socket(server) { //создать функцию которая создаст сокет  сервер в которую передаются сервер экспресс
-	var io = require('socket.io').listen(server);
-	
+	var io = require('socket.io').listen(server);	
 	var users=[];
 	io.on('connection', function(socket) {
 		console.log('websocket connection start');
