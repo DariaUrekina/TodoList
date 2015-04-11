@@ -1,11 +1,23 @@
 $(function() {
+console.log(UserEmail);
 "use strict";
 var socket = io.connect('http://localhost:3000'); 
 var sessionId = '';
 socket.on('connect', function () {
-    sessionId = socket.io.engine.id;
     console.log(sessionId);    
-    socket.emit('SharingSessionId', {sessionId:sessionId})
+    socket.emit('SharingUserEmail', {UserEmail:UserEmail});
+});
+
+socket.on('SharedListItemToUser', function(data) {
+    $.getJSON('/lists', function(data) {    
+            listByLists = data;
+        var liContent='';
+        $.each(listByLists, function(list){
+            liContent+='<li data-listname="' + this.name +'"' + 'data-listid="'+ this['_id'] + '">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
+        });
+        $('#addList ul').html(liContent);
+            
+    }   );              
 });      
 
 function sendAjaxPost(url, data, callback) { 
@@ -185,6 +197,56 @@ function TaskSettingsView() {
         show: { effect: "drop", direction: "right" },
         hide: { effect: "drop", direction: "right" }
     });
+    /*this.onUpdatedTaskItems = function(listByTasks) {
+        var liContent='';       
+        $.each(listByTasks, function(task) {
+            var formatedExpireAt;
+            if (typeof this.expireAt==='undefined') {
+                formatedExpireAt='';
+            } else 
+            if (typeof this.expireAt !='undefined') {
+                formatedExpireAt = moment(this.expireAt).format('DD/MM/YYYY') ;
+            }       
+            if (this.done) {
+                checkbox= '<input type="checkbox" checked>'
+            } else {
+                checkbox = '<input type="checkbox">';
+            }
+            liContent+='<li  data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + formatedExpireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+        });
+        $('#addTask ul').html(liContent);
+    };
+
+
+    $('#btnAddTask').on('click', function(event) {
+        event.preventDefault();          
+        that.emit('AddedTaskItem', {
+            task: {
+                'name': $('#addTask input').val()
+            } 
+        });
+        $('#addTask input').val('');
+    });
+
+    */
+    //@@ todo Add subtasks events
+    /*$('#addSubtask').on('click', function(event) {
+        event.preventDefault();
+        that.emit('AddedSubtaskItem', {
+            subtask: {
+                'name': $('#addSubtask').val()
+            }
+        });
+    });
+
+    $('#addSubtask ul').on('click', function(event) {
+        if (event.target.tagName=='I'){
+            that.emit('RemovedSubtaskItem', {
+                id:event.target.parentNode.dataset.taskid
+            });
+        };        
+    });*/
+
 
     $('#my-dropzone').dropzone({
         url: '/upload',
@@ -330,6 +392,7 @@ function ListData() {
         sendAjaxPost('/users/assigments', {id:options.id, email:options.email}, function(list) {             
             console.log('AssignedListSend');
             socket.emit('SharingList', {id: options.id, email:options.email });    
+
         }); 
     }
 

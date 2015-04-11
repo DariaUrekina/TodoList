@@ -10,7 +10,7 @@ block content
             ul
                 
         #addTask        
-            form(name='form', action='/todos', method='post')
+            form(name='form', action='/tasks', method='post')
                 input#inputTask(type='text', placeholder='Task...', name='name', size='100')
                 button#btnAddTask Add Task 
             ul
@@ -29,11 +29,15 @@ block content
             .control-input
                 b.fa.fa-calendar
                 input#datepicker_setdate(type='text', placeholder='Set date here...') 
-            .control-input
-                b.fa.fa-plus           
-                input#addTask(autofocus='autofocus', placeholder='Add task here!')
+            
             .control-input          
                 #my-dropzone
-                
+            #addSubtask.control-input 
+                form(name='form', action='/subtasks', method='post')          
+                    input#inputSubtask(type='text', autofocus='autofocus', placeholder='Add subtask here!')
+                    button#btnAddSubtask Add Subtask
+                ul        
+    script.
+        var UserEmail = !{JSON.stringify(user.email)};
     // /WRAPPER
 

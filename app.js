@@ -16,6 +16,7 @@ var home = require('./routes/home');
 var users = require('./routes/users');
 var tasks = require('./routes/tasks');
 var lists = require('./routes/lists');
+var subtasks = require('./routes/subtasks');
 var uploadManager = require('./routes/uploadManager')
 var dbConfig = require('./db');
 
@@ -52,7 +53,8 @@ app.use('/home', home);
 app.use('/users', users);
 app.use('/tasks', tasks);
 app.use('/lists', lists);
-app.use('/upload', uploadManager)
+app.use('/subtasks', subtasks);
+app.use('/upload', uploadManager);
 
 
 // Using the flash middleware provided by connect-flash to store messages in session

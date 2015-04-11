@@ -6,14 +6,18 @@ function Socket(server) { //создать функцию которая соз�
 
 		console.log('websocket connection start');
 
-		socket.on('SharingList', function(data) {
-			users[data.email] = {
+		socket.on('SharingUserEmail', function(data) {
+			users[data.UserEmail] = {
 				'socket' : 	socket.id
 			}
 			console.log('socket.id')
 			console.log(socket.id);
-
+			console.log(data.UserEmail);
+			console.log(data);
 		});
+		socket.on('SharingList', function(data) {
+			io.sockets.connected[users[data.email].socket].emit('SharedListItemToUser', data.id);
+		})
 	   
 	});    
 
