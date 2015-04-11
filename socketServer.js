@@ -1,20 +1,21 @@
+var User = require('./models/user.js');
 function Socket(server) { //создать функцию которая создаст сокет  сервер в которую передаются сервер экспресс
-	var io = require('socket.io').listen(server);	
-	var users=[];
-	io.on('connection', function(socket) {
+	var users = {};
+	var io = require('socket.io').listen(server);		
+	io.on('connection', function(socket) {	
+
 		console.log('websocket connection start');
+
 		socket.on('SharingList', function(data) {
-			console.log('user2');
-	      	User.find({'email': data.email}, function(err, user) {  
-	      		console.log(data.email); 
-	      		console.log('user');   
-		        if(err) return next(err);
-		        res.send('shared');       
-		    }); 
-	    });		
+			users[data.email] = {
+				'socket' : 	socket.id
+			}
+			console.log('socket.id')
+			console.log(socket.id);
+
+		});
+	   
 	});    
 
 }
-module.exports = Socket;
-
- 	
+module.exports = Socket; 	

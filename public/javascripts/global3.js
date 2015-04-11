@@ -1,5 +1,12 @@
 $(function() {
-"use strict";    
+"use strict";
+var socket = io.connect('http://localhost:3000'); 
+var sessionId = '';
+socket.on('connect', function () {
+    sessionId = socket.io.engine.id;
+    console.log(sessionId);    
+    socket.emit('SharingSessionId', {sessionId:sessionId})
+});      
 
 function sendAjaxPost(url, data, callback) { 
     $.ajax({
@@ -60,7 +67,7 @@ function ListView() {
     this.onUpdatedListItem = function(listByLists) {
             var liContent='';
             $.each(listByLists, function(list){
-                liContent+='<li data-listname="' + this.name+'"' + 'data-listid="'+this['_id']+'">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
+                liContent+='<li data-listname="' + this.name +'"' + 'data-listid="'+ this['_id'] + '">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
             });
             this.listElement.html(liContent);
             
@@ -260,8 +267,9 @@ function ListSettingsView() {
             });
             that.emit('AssignedList', {
                 id:that.list._id,
-                email: $('#email').val()
-            })
+                email: $('#email').val(),
+            
+            });
             $('#dialogList').dialog('close');
         }
     }); 
@@ -319,16 +327,9 @@ function ListData() {
     }
 
     this.onAssignedList = function(options) {
-        var socket = io.connect('http://localhost:3000');
-        var sessionId='';
         sendAjaxPost('/users/assigments', {id:options.id, email:options.email}, function(list) {             
             console.log('AssignedListSend');
-            socket.on('connect', function () {
-                console.log('consoleConnected ' + sessionId);
-                socket.emit('SharingList', {id: options.id, email:options.email});
-            });
-             
-            that.emit('UpdatedListItem', listByLists);
+            socket.emit('SharingList', {id: options.id, email:options.email });    
         }); 
     }
 

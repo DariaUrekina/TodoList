@@ -5,7 +5,8 @@ var TaskSchema = new mongoose.Schema({
   expireAt: Date,
   done: Boolean,
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
+  subtasks: Array
 });
 
 module.exports = mongoose.model('Tasks', TaskSchema);

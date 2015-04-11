@@ -4,14 +4,13 @@ var _ = require('lodash');
 var mongoose = require('mongoose');
 var List = require('../models/lists.js');
 var Task= require('../models/tasks.js');
-var User = require('../models/user.js')
+var User = require('../models/user.js');
 var moment = require('moment');
 
 module.exports = router;
 
 router.get('/', function(req, res, next) { 
-  console.log(req.user);
-	List.find().sort('createdAt').find({'_id': {$in:req.user.lists } },function(err, lists){
+  List.find().sort('createdAt').find({'_id': {$in:req.user.lists } },function(err, lists){
 		if(err) return next(err);
 		res.json(lists);
 	});
@@ -32,8 +31,8 @@ router.post('/', function(req, res, next){
   req.body.updatedAt=moment().format();
   var user = req.user;
 	List.create(req.body, function(err, list){
-    console.log('req.body ' + req.body)
-		if(err) return next(err);
+   	if(err) return next(err);
+    console.log(user);
     user.lists.push(list._id.toString());
     user.save(function() {
       res.send(list);

@@ -24,16 +24,20 @@ router.post('/assigments', function(req,res,next) {
 	var newlist=[];
 	var id =req.body.id;
 	User.find({'email': req.body.email}, function(err, user) {
+		if(err) return next(err);
 		console.log(user);
 		console.log(req.body.email);
-		console.log(id);		
-		if(err) return next(err);
+		console.log(id);
 		user[0].lists.push(id);
 		user[0].save(function(list) {
-	    	res.send(list);
 	    	console.log( req.body);
+	    	res.send({
+	    		status: 'ok'
+	    	});
     	});
-	}); 
+
+	});
+
 });
 
 
