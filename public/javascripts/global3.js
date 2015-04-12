@@ -197,55 +197,38 @@ function TaskSettingsView() {
         show: { effect: "drop", direction: "right" },
         hide: { effect: "drop", direction: "right" }
     });
-    /*this.onUpdatedTaskItems = function(listByTasks) {
+    this.onUpdatedSubtaskItems = function(listByTasks) {
         var liContent='';       
         $.each(listByTasks, function(task) {
-            var formatedExpireAt;
-            if (typeof this.expireAt==='undefined') {
-                formatedExpireAt='';
-            } else 
-            if (typeof this.expireAt !='undefined') {
-                formatedExpireAt = moment(this.expireAt).format('DD/MM/YYYY') ;
-            }       
             if (this.done) {
                 checkbox= '<input type="checkbox" checked>'
             } else {
                 checkbox = '<input type="checkbox">';
             }
-            liContent+='<li  data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + formatedExpireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+            liContent+='<li  data-subtaskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
-        $('#addTask ul').html(liContent);
-    };
+        $('#addSubtask ul').html(liContent);
+    }; 
 
-
-    $('#btnAddTask').on('click', function(event) {
-        event.preventDefault();          
-        that.emit('AddedTaskItem', {
-            task: {
-                'name': $('#addTask input').val()
-            } 
-        });
-        $('#addTask input').val('');
-    });
-
-    */
+    
     //@@ todo Add subtasks events
-    /*$('#addSubtask').on('click', function(event) {
+    $('#btnAddSubtask').on('click', function(event) {
         event.preventDefault();
-        that.emit('AddedSubtaskItem', {
+        console.log('Add subtask');
+        /*that.emit('AddedSubtaskItem', {
             subtask: {
                 'name': $('#addSubtask').val()
             }
-        });
+        });*/
     });
 
     $('#addSubtask ul').on('click', function(event) {
         if (event.target.tagName=='I'){
-            that.emit('RemovedSubtaskItem', {
-                id:event.target.parentNode.dataset.taskid
-            });
+            // that.emit('RemovedSubtaskItem', {
+            //     id:event.target.parentNode.dataset.subtaskid
+            // });
         };        
-    });*/
+    });
 
 
     $('#my-dropzone').dropzone({
@@ -484,6 +467,11 @@ function TaskData(){
     this.on('RemovedTaskItem', this.onRemovedTaskItem);
     this.on('AddedTaskItem', this.onAddedTaskItem);
     this.on('ClickedListItem', this.onClickedListItem);
+}
+
+function SubtaskData() {
+    Component.call(this);
+    var that = this;
 }
 
 
