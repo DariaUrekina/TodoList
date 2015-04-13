@@ -4,6 +4,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Task = require('../models/tasks.js');
 var List = require('../models/lists.js');
+var Subtask = require('../models/subtasks.js');
 var moment = require('moment');
 
 
@@ -16,6 +17,21 @@ router.get('/', function(req, res, next) {
     res.json(tasks);      
   });
 });
+
+
+
+/* GET /tasks/id */
+router.get('/:id', function(req, res, next) {
+  Task.findById(req.params.id, function (err, task) {
+    if (err) return next(err);
+    Subtask.find({'_id': {$in: task.subtasks} }, function (err, subtasks) {
+      if (err) return next(err);
+      console.log(subtasks);
+      res.json(subtasks);  
+    })
+  });
+});
+
 
 
 /* POST /tasks */
@@ -49,16 +65,6 @@ router.delete('/:task_id', function(req, res,next) {
       res.send({state:'deleted!'});
     });
 });
-
-
-/* GET /tasks/id */
-router.get('/:id', function(req, res, next) {
-  Task.findById(req.params.id, function (err, post) {
-    if (err) return next(err);
-    res.json(post);
-  });
-});
-
 
 
 /* PUT /tasks/:id */

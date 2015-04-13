@@ -11,17 +11,17 @@ module.exports = router;
 
 router.get('/', function(req, res, next) { 
   List.find().sort('createdAt').find({'_id': {$in:req.user.lists } },function(err, lists){
-		if(err) return next(err);
-		res.json(lists);
-	});
+    if(err) return next(err);
+    res.json(lists);
+  });
 });
 
 router.get('/:id', function(req, res, next) {
   List.findById(req.params.id, function (err, list) {
     if (err) return next(err);
     Task.find({'_id': {$in: list.tasks} }, function (err, tasks) {
-    	if (err) return next(err);
-    	res.json(tasks);	
+      if (err) return next(err);
+      res.json(tasks);  
     });
   });
 });
@@ -30,8 +30,8 @@ router.post('/', function(req, res, next){
   req.body.createdAt = moment().format(); 
   req.body.updatedAt=moment().format();
   var user = req.user;
-	List.create(req.body, function(err, list){
-   	if(err) return next(err);
+  List.create(req.body, function(err, list){
+    if(err) return next(err);
     console.log(user);
     user.lists.push(list._id.toString());
     user.save(function() {
@@ -39,7 +39,7 @@ router.post('/', function(req, res, next){
       console.log(req.body);
     });
 
-	});
+  });
 });
 
 router.delete('/:id', function(req, res, next) {

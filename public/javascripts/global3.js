@@ -1,16 +1,17 @@
 $(function() {
-console.log(UserEmail);
 "use strict";
 var socket = io.connect('http://localhost:3000'); 
 var sessionId = '';
+
 socket.on('connect', function () {
     console.log(sessionId);    
     socket.emit('SharingUserEmail', {UserEmail:UserEmail});
 });
 
 socket.on('SharedListItemToUser', function(data) {
+    var listByLists=[];
     $.getJSON('/lists', function(data) {    
-            listByLists = data;
+        listByLists = data;
         var liContent='';
         $.each(listByLists, function(list){
             liContent+='<li data-listname="' + this.name +'"' + 'data-listid="'+ this['_id'] + '">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
@@ -81,8 +82,7 @@ function ListView() {
             $.each(listByLists, function(list){
                 liContent+='<li data-listname="' + this.name +'"' + 'data-listid="'+ this['_id'] + '">' +  this.name +  '<i class="fa fa-times"></i>'+'</li>'; 
             });
-            this.listElement.html(liContent);
-            
+            this.listElement.html(liContent);           
     };
     
     this.on('UpdatedListItem', this.onUpdatedListItem);
@@ -125,6 +125,8 @@ function TaskView() {
     Component.call(this);    
     var that=this;
     var checkbox;
+
+           
     this.onUpdatedTaskItems = function(listByTasks) {
         var liContent='';       
         $.each(listByTasks, function(task) {
@@ -142,8 +144,16 @@ function TaskView() {
             }
             liContent+='<li  data-taskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' +'<span class="expire-at">' + formatedExpireAt + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
         });
-        $('#addTask ul').html(liContent);
+        $('#addTask ul').html(liContent);   
     };
+
+    $('#addTask ul').dblclick(function(event) {
+        if (event.target.tagName === 'LI') {
+            that.emit('ClickedTaskItem', {
+                id:event.target.dataset.taskid
+            });                  
+        }
+    });
 
 
     $('#btnAddTask').on('click', function(event) {
@@ -197,39 +207,7 @@ function TaskSettingsView() {
         show: { effect: "drop", direction: "right" },
         hide: { effect: "drop", direction: "right" }
     });
-    this.onUpdatedSubtaskItems = function(listByTasks) {
-        var liContent='';       
-        $.each(listByTasks, function(task) {
-            if (this.done) {
-                checkbox= '<input type="checkbox" checked>'
-            } else {
-                checkbox = '<input type="checkbox">';
-            }
-            liContent+='<li  data-subtaskid="' + this['_id']+'">' + checkbox  + '<span class="taskname">' + this.name + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
-        });
-        $('#addSubtask ul').html(liContent);
-    }; 
-
     
-    //@@ todo Add subtasks events
-    $('#btnAddSubtask').on('click', function(event) {
-        event.preventDefault();
-        console.log('Add subtask');
-        /*that.emit('AddedSubtaskItem', {
-            subtask: {
-                'name': $('#addSubtask').val()
-            }
-        });*/
-    });
-
-    $('#addSubtask ul').on('click', function(event) {
-        if (event.target.tagName=='I'){
-            // that.emit('RemovedSubtaskItem', {
-            //     id:event.target.parentNode.dataset.subtaskid
-            // });
-        };        
-    });
-
 
     $('#my-dropzone').dropzone({
         url: '/upload',
@@ -287,6 +265,53 @@ function TaskSettingsView() {
     this.on('SelectedTaskItem', this.onSelectedTaskItem);
 }
 
+
+function SubtaskView() {
+    Component.call(this);
+    var that = this;
+    var checkbox;
+    this.onUpdatedSubtaskItems = function(listBySubtasks) {
+        var liContent='';       
+        console.log(listBySubtasks);
+        $.each(listBySubtasks, function(subtask) {
+            if (this.done) {
+                checkbox= '<input type="checkbox" checked>'
+            } else {
+                checkbox = '<input type="checkbox">';
+            }
+            liContent+='<li  data-subtaskid="' + this['_id']+'">' + checkbox  + '<span class="subtaskname">' + this.name + '</span>' + '</span>' + '<i class="fa fa-times"></i>'+ '</li>';
+        });
+
+        $('#addSubtask ul').html(liContent);  
+    };
+
+
+    $('#btnAddSubtask').on('click', function(event) {
+        event.preventDefault();          
+        that.emit('AddedSubtaskItem', {
+            subtask: {
+                'name': $('#addSubtask input').val()
+            } 
+        });
+        $('#addSubtask input').val('');
+    });
+
+    $('#addSubtask ul').on('click', function(event) {
+        if (event.target.tagName=='I'){
+            that.emit('RemovedSubtaskItem', {
+                id:event.target.parentNode.dataset.subtaskid
+            });
+        };
+        if (event.target.tagName=='INPUT') {
+            that.emit('CheckedSubtaskItem', {
+                id:event.target.parentNode.dataset.subtaskid,
+                done: event.target.checked
+            });
+        }
+    });
+    this.on('UpdatedSubtaskItems', this.onUpdatedSubtaskItems);
+}
+
 function ListSettingsView() {
     Component.call(this);
     var that=this;
@@ -303,21 +328,26 @@ function ListSettingsView() {
         $('#name').val(that.list.name);
     }
     
-    $('.btnReady').on('click', function(event) {
-        if (event.target.parentNode.checkValidity()) {
+    $('.btnReady').on('click', function(event) {        
             event.preventDefault();
             that.emit('ChangedListName', {
                 id:that.list._id,
                 name: $('#name').val()
             });
-            that.emit('AssignedList', {
+            $('#dialogList').dialog('close');
+        
+    }); 
+
+    $('.assigned').on('click', function(event) {
+        if (event.target.parentNode.checkValidity()) {
+            event.preventDefault();
+             that.emit('AssignedList', {
                 id:that.list._id,
-                email: $('#email').val(),
-            
+                email: $('#email').val(),            
             });
             $('#dialogList').dialog('close');
         }
-    }); 
+    });
 
     this.on('SelectedListItem', this.onSelectedListItem);
 }   
@@ -401,14 +431,6 @@ function TaskData(){
             that.emit('UpdatedTaskItems', listByTasks);
         });
     };
-   
-    this.onLoadLists = function(){
-        $.getJSON('/lists', function(data) {    
-            listByLists = data;
-            that.emit('UpdatedListItem', listByLists);
-        });
-    };    
-
 
     this.onAddedTaskItem = function(newTask) {
         newTask.list_id=selectedListById;
@@ -471,7 +493,73 @@ function TaskData(){
 
 function SubtaskData() {
     Component.call(this);
-    var that = this;
+    var that=this;
+    var selectedTaskById;
+    var listBySubtasks=[];
+   
+    this.onClickedTaskItem = function(options){
+        $.getJSON('/tasks/' + options.id, function(data) {
+                listBySubtasks = data;
+                selectedTaskById=options.id;
+                that.emit('UpdatedSubtaskItems', listBySubtasks);
+        });
+    };   
+ 
+
+    this.onAddedSubtaskItem = function(newSubtask) {
+        newSubtask.task_id=selectedTaskById;
+        if (newSubtask.subtask.name!='') {
+            sendAjaxPost('/subtasks' , newSubtask, function(subtask) {
+                console.log(subtask);
+                console.log(listBySubtasks);
+                listBySubtasks.push(subtask);
+                that.emit('UpdatedSubtaskItems', listBySubtasks);
+            });
+        }    
+    };
+    this.onRemovedSubtaskItem = function(options) {
+        sendAjaxDelete('/subtasks/' + options.id, function() {
+            listBySubtasks = listBySubtasks.filter(function(subtask) {
+                return subtask._id != options.id;
+            });
+            that.emit('UpdatedSubtaskItems', listBySubtasks)
+        });
+    }
+
+       
+    this.onCheckedSubtaskItem = function(options) {
+        var doneSubtasks = [];
+        sendAjaxUpdate('/subtasks/' + options.id, {done:options.done}, function(subtask) { 
+            for (var i=0; i<listBySubtasks.length; i++) {
+                if (listBySubtasks[i]._id===options.id) {
+                    listBySubtasks[i].done=options.done;
+                    doneSubtasks.push(listBySubtasks[i]);
+                } 
+            }
+            that.emit('UpdatedSubtaskItems', listBySubtasks);
+        });    
+    };   
+
+      this.onCheckedTaskItem = function(options) {
+        var doneTasks = [];
+        sendAjaxUpdate('/tasks/' + options.id, {done:options.done}, function(task) { 
+            for (var i=0; i<listByTasks.length; i++) {
+                if (listByTasks[i]._id===options.id) {
+                    listByTasks[i].done=options.done;
+                    doneTasks.push(listByTasks[i]); 
+                    console.log(doneTasks);   
+                } 
+            }
+            that.emit('UpdatedTaskItems', listByTasks);
+        });    
+    };   
+
+
+    this.on('CheckedSubtaskItem', this.onCheckedSubtaskItem);
+    this.on('RemovedSubtaskItem', this.onRemovedSubtaskItem);
+    this.on('ClickedTaskItem', this.onClickedTaskItem);
+    this.on('AddedSubtaskItem', this.onAddedSubtaskItem);
+
 }
 
 
@@ -499,6 +587,8 @@ var listData = new ListData();
 var listView = new ListView();
 var taskView = new TaskView();
 var imageData = new ImageData();
+var subtaskData = new SubtaskData();
+var subtaskView = new SubtaskView();
 var taskSettingsView = new TaskSettingsView();
 var listSettingsView = new ListSettingsView();
 }); 

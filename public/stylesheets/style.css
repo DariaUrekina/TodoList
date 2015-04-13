@@ -9,6 +9,10 @@ a {
   color: #00B7FF;
 }
 
+#addTask ul {
+    margin: 10px 0 3px 275px;
+}
+
 #addTask li {
 	position: relative;
     margin: 2px;
@@ -24,56 +28,106 @@ a {
     background-color: #0099cc; 
 }
 
-
-#addTask ul {
-	margin: 10px 0 3px 275px;
-}
-
 #addTask form {
 	margin-left: 275px;
 	width: 275px;
 }
 
-#addList button{
+#addTask button, #addList button, #addSubtask button{
 	display: none;
 }
 
-#addTask button {
-    display: none;
+#dialogTask  {
+  opacity: 0.8;
 }
 
-#addSubtask button {
-    display: none;
+#dialogTask input {
+    margin: 10px;
+    padding: 5px;
 }
 
 #addList {
 	position: absolute;
 	left: 1px;
-    background-color: #fcfcfc;
-	
-}
-
-#addList form {
-	width: 250px;
+    background-color: #fcfcfc;	
 }
 
 #addList ul {
-	position: absolute;
-	width: 250px;	
+    position: absolute;
+    width: 250px;   
 }
 
-#addList li {
+#addList li, #addSubtask li {
     position: relative;	
 	padding: 7px;
 	margin:2px 0 1px 0;
-    cursor: pointer;
     opacity: 0.8;
     background-color: #fcfcfc;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 #addList li:hover {
     background-color: #0099cc;
+}
+
+#addList form {
+    width: 250px;
+}
+
+#dialogList {
+    width: 380px !important;
+}
+
+#dialogList input[type='text'] {
+    margin: 8px 0  0 10px;
+}
+
+#dialogList input[type='email'] {
+    margin: 8px 0 10px 10px;
+}
+
+
+#dialogList p {
+    margin: 10px 0 0 17px;  
+    font-size: 15px;  
+}
+
+#dialogList .btnReady, #dialogList .assigned {
+    display: inline-block;
+    margin: 5px 0 10px 80px;
+    padding: 8px 16px;
+    width: 100px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.08);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.08);       
+    background-color: rgb( 51, 102, 204 );
+    border: 1px solid rgb( 44, 91, 104 );
+    color: #fff; 
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;    
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);    
+    -webkit-transition: background-color 0.1s linear;
+    -moz-transition: background-color 0.1s linear;
+    -o-transition: background-color 0.1s linear;
+    transition: background-color 0.1s linear;
+}
+
+#dialogList .btnReady:hover , #dialogList .assigned:hover{
+    cursor:pointer;
+    background-color: rgb( 58, 131, 213 );  
+}
+        
+#dialogList .btnReady:active, #dialogList .assigned:active {      
+    background-color: rgb( 42, 91, 191 );   
+}
+
+#dialogList .assigned {
+    margin-left: 10px;
+    width: 80px;
+    padding: 5px 5px;
 }
 
 .form-signin {
@@ -109,16 +163,19 @@ a {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
+
 .form-signin input[type="password"] {
     margin-bottom: 10px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
 .form-signin input[type="password"].nomargin {
 	margin-bottom: 0px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
 .account-wall {
     margin-top: 20px;
     padding: 40px 0px 20px 0px;
@@ -127,6 +184,7 @@ a {
     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
+
 .signup-wall {
 	margin-top: 20px;
     padding: 20px 0px 20px 0px;
@@ -135,12 +193,14 @@ a {
     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);	
 }
+
 .login-title {
     color: #555;
     font-size: 18px;
     font-weight: 400;
     display: block;
 }
+
 .profile-img {
     width: 96px;
     height: 96px;
@@ -150,6 +210,7 @@ a {
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
+
 .new-account {
     display: block;
     margin-top: 10px;
@@ -173,16 +234,12 @@ i {
 	display: none;
 }
 
-input[type='checkbox']:checked + .taskname {
+input[type='checkbox']:checked + .taskname, input[type='checkbox']:checked + .subtaskname {
     text-decoration: line-through;
 }
 
-#ui-id-1 {
+#ui-id-1, #ui-id-2 {
     margin-left:100px;
-}
-
-#ui-id-2 {
-    margin-left: 120px;
 }
 
 .ui-widget-header {
@@ -190,35 +247,16 @@ input[type='checkbox']:checked + .taskname {
     border:none !important;
 }
 
-#dialogList input[type='text'] {
-    margin: 8px 0 0 35px;
-}
-#dialogList input[type='email'] {
-    margin: 8px 0 10px 35px;
-}
-
-#dialogList p {
-    text-align: center;
-    margin: 10px 0 0 0;  
-    font-size: 15px;  
-}
-
-#dialogTask input {
-    margin: 10px;
-    padding: 5px;
-}
-
-#dialogTask  {
-  opacity: 0.8;
-}
-
-.btnReady {
-    margin: 5px 0 10px 80px;
-}
-
 .control-input {
     position: relative;
+}
 
+.fa.fa-sign-out {
+    position: fixed;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .expire-at {
@@ -245,11 +283,5 @@ input[type='checkbox']:checked + .taskname {
 }
 
 
-.fa.fa-sign-out {
-    position: fixed;
-    top: 0;
-    right: 0;
-    cursor: pointer;
-    text-decoration: none;
-}
+
 

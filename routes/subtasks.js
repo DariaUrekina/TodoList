@@ -2,19 +2,18 @@ var express = require('express');
 var _ = require('lodash');
 var router = express.Router();
 var mongoose = require('mongoose');
-var Subtask = require('../models/Subtasks.js');
+var Subtask = require('../models/subtasks.js');
+var Task = require('../models/tasks.js');
 var List = require('../models/lists.js');
 var moment = require('moment');
-
-
 
 module.exports = router;
 
 /* GET /Subtasks listing. */
 router.get('/', function(req, res, next) {  
-  Subtask.find().sort('createdAt').find(function (err, Subtasks) {
+  Subtask.find().sort('createdAt').find(function (err, subtasks) {
     if (err) return next(err);
-    res.json(Subtasks);      
+    res.json(subtasks);      
   });
 });
 
@@ -23,43 +22,45 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   req.body.createdAt = moment().format(); 
   req.body.updatedAt=moment().format();
-  Subtask.create(req.body.Subtask, function (err, Subtask) {
+  Subtask.create(req.body.subtask, function (err, subtask) {
+    console.log('subtask');
+    console.log(subtask);
     if (err) return next(err);
-    List.findById(req.body.list_id, function(err, list) {
+    Task.findById(req.body.task_id, function(err, task) {
+      console.log('task');
+      console.log(task);
       if (err) return next(err);
-      list.Subtasks.push(Subtask._id.toString());
-      list.save();
-      res.send(Subtask);
+      task.subtasks.push(subtask._id.toString());
+      task.save();
+      res.send(subtask);
     });
   });	
 });
 
 /*  DELETE Subtasks */
-router.delete('/:Subtask_id', function(req, res,next) {   
-  Subtask.remove({"_id": {"$oid": req.params.Subtask_id}});
-    List.find({ Subtasks: req.params.Subtask_id }, function(err, lists) {
-      _.each(lists, function(list) {
+router.delete('/:subtask_id', function(req, res,next) {   
+  Subtask.remove({"_id": {"$oid": req.params.subtask_id}});
+    Task.find({ subtasks: req.params.subtask_id }, function(err, tasks) {
+      _.each(tasks, function(task) {
         if (err) return next(err); 
-        console.log(list);
-        list.Subtasks = _.filter(list.Subtasks, function(Subtask) {
-          console.log(Subtask._id);
-          return (Subtask !== req.params.Subtask_id);
+          task.subtasks = _.filter(task.subtasks, function(subtask) {
+          console.log(subtask._id);
+          return (subtask !== req.params.subtask_id);
         });
-        list.save();
+        task.save();
       });
       res.send({state:'deleted!'});
     });
 });
 
-
 /* GET /Subtasks/id */
+
 router.get('/:id', function(req, res, next) {
   Subtask.findById(req.params.id, function (err, post) {
     if (err) return next(err);
     res.json(post);
   });
 });
-
 
 
 /* PUT /Subtasks/:id */

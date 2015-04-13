@@ -23,15 +23,14 @@ block content
             p Choose users!
             form(name='form', method='post') 
                 input#email(type='email', placeholder='Enter your email', name='email')
+                button(class='assigned')  Share list! 
                 input(class='btnReady', type='submit', value='Submit')
 
         #dialogTask            
             .control-input
                 b.fa.fa-calendar
-                input#datepicker_setdate(type='text', placeholder='Set date here...') 
-            
-            .control-input          
-                #my-dropzone
+                input#datepicker_setdate(type='text', placeholder='Set date here...')                    
+            #my-dropzone
             #addSubtask.control-input 
                 form(name='form', action='/subtasks', method='post')          
                     input#inputSubtask(type='text', autofocus='autofocus', placeholder='Add subtask here!')
